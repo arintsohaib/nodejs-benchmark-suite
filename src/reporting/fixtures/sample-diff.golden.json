@@ -1,0 +1,25 @@
+{
+  "leftRunId": "20260711T000000Z-fixture",
+  "rightRunId": "20260711T000001Z-fixture-b",
+  "leftProfileDigest": "abc123digest",
+  "rightProfileDigest": "def456digest",
+  "rows": [
+    {
+      "stageId": "build",
+      "metric": "durationMs",
+      "cellKey": "default",
+      "leftMedian": 50,
+      "presence": "left-only"
+    },
+    {
+      "stageId": "install",
+      "metric": "durationMs",
+      "cellKey": "default",
+      "leftMedian": 110,
+      "rightMedian": 100,
+      "deltaAbsolute": -10,
+      "deltaPercent": -9.090909090909092,
+      "presence": "both"
+    }
+  ]
+}

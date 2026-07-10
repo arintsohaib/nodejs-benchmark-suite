@@ -1,0 +1,35 @@
+schemaVersion: 1
+id: install-build-matrix
+description: >
+  M2 smoke profile: materialize node-ts-lib (tiny), cold-install and build across
+  npm and pnpm. Network required for install. Default CI only dry-runs this profile;
+  full execution is optional (see README / JSBENCH_SLOW_TESTS).
+workload:
+  template: node-ts-lib
+  size: tiny
+  seed: 1
+matrix:
+  packageManager: [npm, pnpm]
+stages:
+  - id: install
+    action: packageManager.install
+    cache: cold
+    network: true
+    timeoutMs: 300000
+  - id: build
+    action: project.build
+    cache: warm
+    timeoutMs: 120000
+iterations:
+  warmup: 0
+  measured: 1
+runner:
+  type: native
+metrics:
+  collectors:
+    - wall
+reporting:
+  formats:
+    - json
+    - markdown
+    - html

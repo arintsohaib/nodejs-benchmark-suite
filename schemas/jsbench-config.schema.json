@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nodejs-benchmark-suite.local/schemas/jsbench-config.schema.json",
+  "title": "JsBenchConfig",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "outputDir": { "type": "string", "minLength": 1 },
+    "workspaceRoot": { "type": "string", "minLength": 1 },
+    "defaultRunner": { "type": "string", "enum": ["native", "docker"] },
+    "strictDoctor": { "type": "boolean" },
+    "profilesDir": { "type": "string", "minLength": 1 },
+    "logLevel": {
+      "type": "string",
+      "enum": ["debug", "info", "warn", "error", "silent"]
+    },
+    "redactEnv": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "toolchains": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "node": { "type": "string", "minLength": 1 }
+      }
+    },
+    "plugins": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Paths to in-process plugin modules (collectors/reporters)"
+    }
+  }
+}

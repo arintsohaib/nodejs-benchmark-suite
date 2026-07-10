@@ -1,0 +1,28 @@
+schemaVersion: 1
+id: foundation-sample
+description: >
+  Sample profile for profile loading and RunPlan dry-run. For executable
+  package-manager stages see install-build-matrix (requires matrix.packageManager).
+workload:
+  template: node-ts-lib
+  size: tiny
+  seed: 1
+matrix:
+  packageManager: [npm]
+stages:
+  - id: build
+    action: project.build
+    cache: cold
+iterations:
+  warmup: 0
+  measured: 1
+runner:
+  type: native
+metrics:
+  collectors:
+    - wall
+reporting:
+  formats:
+    - json
+    - markdown
+    - html

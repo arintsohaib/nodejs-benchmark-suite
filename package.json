@@ -1,0 +1,55 @@
+{
+  "name": "nodejs-benchmark-suite",
+  "version": "1.0.0",
+  "description": "Engineering benchmark platform for modern JavaScript development performance",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@10.12.4",
+  "bin": {
+    "jsbench": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "schemas",
+    "profiles",
+    "fixtures",
+    "templates",
+    "docker",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "test": "tsx --test $(find src -name '*.test.ts' ! -name '*.slow.test.ts' | sort)",
+    "test:slow": "JSBENCH_SLOW_TESTS=1 tsx --test $(find src -name '*.slow.test.ts' | sort)",
+    "test:all": "tsx --test $(find src -name '*.test.ts' | sort)",
+    "test:watch": "tsx --test --watch $(find src -name '*.test.ts' | sort)",
+    "jsbench": "tsx src/cli.ts",
+    "prepublishOnly": "tsc -p tsconfig.build.json"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "yaml": "^2.8.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^22.15.30",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}

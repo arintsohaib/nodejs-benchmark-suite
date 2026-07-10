@@ -1,0 +1,117 @@
+{
+  "suiteVersion": "0.1.0-0",
+  "schemaVersion": 1,
+  "metricsSchemaVersion": 1,
+  "runId": "20260711T000000Z-fixture",
+  "createdAt": "2026-07-11T00:00:00.000Z",
+  "finishedAt": "2026-07-11T00:01:00.000Z",
+  "status": "partial",
+  "profile": {
+    "id": "fixture-profile",
+    "digest": "abc123digest",
+    "path": "profiles/fixture-profile.yaml"
+  },
+  "environment": {
+    "mode": "native",
+    "os": {
+      "platform": "linux",
+      "release": "6.1.0",
+      "distro": "Debian GNU/Linux 13 (trixie)"
+    },
+    "cpu": {
+      "model": "Test CPU",
+      "coresLogical": 4,
+      "arch": "x64"
+    },
+    "memory": {
+      "totalBytes": 8589934592
+    },
+    "toolchains": {
+      "node": {
+        "path": "/usr/bin/node",
+        "version": "v22.0.0"
+      },
+      "npm": {
+        "path": "/usr/bin/npm",
+        "version": "10.0.0"
+      }
+    }
+  },
+  "plan": {
+    "cellCount": 1,
+    "stageIds": ["install", "build"],
+    "warmup": 0,
+    "measured": 3
+  },
+  "results": [
+    {
+      "cellId": "default",
+      "stageId": "install",
+      "iteration": 1,
+      "iterationKind": "measured",
+      "status": "passed",
+      "durationMs": 100,
+      "metrics": { "durationMs": 100 }
+    },
+    {
+      "cellId": "default",
+      "stageId": "install",
+      "iteration": 2,
+      "iterationKind": "measured",
+      "status": "passed",
+      "durationMs": 120,
+      "metrics": { "durationMs": 120 }
+    },
+    {
+      "cellId": "default",
+      "stageId": "install",
+      "iteration": 3,
+      "iterationKind": "measured",
+      "status": "passed",
+      "durationMs": 110,
+      "metrics": { "durationMs": 110 }
+    },
+    {
+      "cellId": "default",
+      "stageId": "build",
+      "iteration": 1,
+      "iterationKind": "measured",
+      "status": "failed",
+      "durationMs": 50,
+      "metrics": { "durationMs": 50 }
+    }
+  ],
+  "aggregates": [
+    {
+      "cellId": "default",
+      "stageId": "install",
+      "metric": "durationMs",
+      "unit": "ms",
+      "stats": {
+        "count": 3,
+        "min": 100,
+        "max": 120,
+        "mean": 110,
+        "median": 110,
+        "p95": 120,
+        "stdev": 10
+      }
+    },
+    {
+      "cellId": "default",
+      "stageId": "build",
+      "metric": "durationMs",
+      "unit": "ms",
+      "stats": {
+        "count": 1,
+        "min": 50,
+        "max": 50,
+        "mean": 50,
+        "median": 50,
+        "p95": 50,
+        "stdev": 0
+      }
+    }
+  ],
+  "warnings": ["Stage build failed on iteration 1"]
+}

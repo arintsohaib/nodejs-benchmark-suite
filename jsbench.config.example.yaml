@@ -1,0 +1,17 @@
+# Example project configuration for jsbench.
+# Copy to jsbench.config.yaml and adjust as needed.
+#
+# Precedence: CLI > env (JSBENCH_*) > this file > ~/.config/jsbench/config.yaml > defaults
+
+outputDir: ./reports
+workspaceRoot: ./generated
+profilesDir: ./profiles
+defaultRunner: native
+strictDoctor: true
+logLevel: info
+toolchains:
+  node: policy:lts-active
+
+# Optional in-process plugins (collectors / reporters). Paths relative to cwd.
+# plugins:
+#   - ./examples/plugins/sample-note-reporter.mjs

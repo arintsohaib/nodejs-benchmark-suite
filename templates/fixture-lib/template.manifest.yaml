@@ -1,0 +1,42 @@
+schemaVersion: 1
+id: fixture-lib
+title: Minimal TypeScript library fixture (generator core)
+description: >
+  S10 smoke template — deterministic modules under src/generated/.
+  Prefer node-ts-lib / nextjs-app for real workloads.
+engines:
+  node: "policy:lts-active"
+supports:
+  packageManagers: [npm, pnpm, yarn]
+  sizes: [tiny, small, medium, large]
+produces:
+  kind: library
+  scripts:
+    build: tsc -p tsconfig.json
+    typecheck: tsc -p tsconfig.json --noEmit
+sizes:
+  tiny:
+    fileCount: 2
+    packageCount: 1
+    tsComplexity: 1
+    dependencySet: minimal
+  small:
+    fileCount: 5
+    packageCount: 1
+    tsComplexity: 2
+    dependencySet: minimal
+  medium:
+    fileCount: 12
+    packageCount: 1
+    tsComplexity: 3
+    dependencySet: standard
+  large:
+    fileCount: 30
+    packageCount: 1
+    tsComplexity: 4
+    dependencySet: standard
+parameters:
+  - name: fileCount
+    type: integer
+  - name: tsComplexity
+    type: integer

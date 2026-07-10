@@ -1,0 +1,37 @@
+schemaVersion: 1
+id: docker-smoke
+description: >
+  M3 Docker smoke profile. Bind-mounts fixtures/native-smoke into a Node LTS
+  container and runs node index.js via docker exec. Default CI does not require
+  Docker; optional workflow_dispatch job may run this profile.
+workload:
+  template: fixtures/native-smoke
+  size: tiny
+  seed: 1
+stages:
+  - id: run-fixture
+    action: raw.command
+    command: node
+    args:
+      - index.js
+    timeoutMs: 30000
+iterations:
+  warmup: 0
+  measured: 1
+runner:
+  type: docker
+  docker:
+    imagePolicy: node-lts-bookworm-slim
+    pull: if-missing
+    mount: bind
+    workdir: /workspace
+    removeContainers: always
+    removeVolumes: true
+metrics:
+  collectors:
+    - wall
+reporting:
+  formats:
+    - json
+    - markdown
+    - html

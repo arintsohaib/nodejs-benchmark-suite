@@ -1,0 +1,118 @@
+name: ci
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      native_smoke:
+        description: "Also run the slower native-smoke profile job"
+        type: boolean
+        default: true
+      docker_smoke:
+        description: "Also run the optional docker-smoke profile job"
+        type: boolean
+        default: false
+
+# Action major tags are used for readability. Prefer commit SHAs when cutting 1.0
+# (see docs/11_DEPENDENCY_POLICY.md and T-M5-05).
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Active LTS line at workflow authoring time; bump via version policy.
+          node-version: "22"
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - name: CLI smoke
+        run: |
+          node dist/cli.js version
+          node dist/cli.js doctor
+          node dist/cli.js list-profiles
+          node dist/cli.js validate-profile native-smoke
+          node dist/cli.js validate-profile install-build-matrix
+          node dist/cli.js validate-profile docker-smoke
+          node dist/cli.js run --profile foundation-sample --dry-run
+          node dist/cli.js run --profile install-build-matrix --dry-run
+          node dist/cli.js run --profile docker-smoke --dry-run
+          node dist/cli.js run --profile native-smoke --output-dir /tmp/jsbench-ci-reports --workspace-root /tmp/jsbench-ci-generated --log-level warn
+
+  native-smoke:
+    if: github.event_name == 'workflow_dispatch' && inputs.native_smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Native smoke (dispatch)
+        run: |
+          node dist/cli.js doctor
+          node dist/cli.js run --profile native-smoke --log-level info
+
+  docker-smoke:
+    if: github.event_name == 'workflow_dispatch' && inputs.docker_smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Docker smoke (dispatch)
+        run: |
+          node dist/cli.js doctor
+          node dist/cli.js run --profile docker-smoke --log-level info

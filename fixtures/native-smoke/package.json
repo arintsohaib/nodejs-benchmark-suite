@@ -1,0 +1,7 @@
+{
+  "name": "jsbench-native-smoke-fixture",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Static M1 smoke fixture (no install required)"
+}

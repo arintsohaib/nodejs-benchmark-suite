@@ -1,0 +1,9 @@
+{
+  "comment": "Offline image pins for imagePolicy aliases. Calibrated for S17; refresh deliberately.",
+  "resolvedAt": "2026-07-11",
+  "calibratedForSuite": "1.0.0",
+  "policies": {
+    "node-lts-bookworm-slim": "node:22-bookworm-slim",
+    "node-lts-bookworm": "node:22-bookworm"
+  }
+}

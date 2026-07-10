@@ -1,0 +1,15 @@
+{
+  "comment": "Calibrated digests for built-in profiles and tiny template snapshots (S17). Re-baseline when profiles/templates/pins change.",
+  "calibratedAt": "2026-07-11",
+  "suiteVersionAtCalibration": "1.0.0",
+  "profiles": {
+    "docker-smoke": "30ae42aa976dad77be971c27f2d486299d35b9b8044a93809a34e370c5ea4dcf",
+    "foundation-sample": "bef02f288e533d3b185df29f41d98055543df7c6b34d258f5bba12c524431d89",
+    "install-build-matrix": "f28e62577a91843f21fd60e8ef3ee6a9c0fbd67038082330b18a42fa1b59b310",
+    "native-smoke": "082cad3d8100b0ee3c49a7a647147aaed4be973539ba546f89748fcec22e8ada"
+  },
+  "templates": {
+    "node-ts-lib@tiny@1": "a2615460b5767b56b4d4cfa5c3fa8db97b3c0683cf91961386961d233e5f53a3",
+    "nextjs-app@tiny@1": "126b70a22cafaca0a3199fffb7dfc528822e503f461e6a2536d200c9844dd770"
+  }
+}

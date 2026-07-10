@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nodejs-benchmark-suite.local/schemas/run-artifact.schema.json",
+  "title": "RunArtifact",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "suiteVersion",
+    "schemaVersion",
+    "metricsSchemaVersion",
+    "runId",
+    "createdAt",
+    "status",
+    "profile",
+    "environment",
+    "plan",
+    "results",
+    "aggregates",
+    "warnings"
+  ],
+  "properties": {
+    "suiteVersion": { "type": "string", "minLength": 1 },
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "metricsSchemaVersion": { "type": "integer", "const": 1 },
+    "runId": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "minLength": 1 },
+    "finishedAt": { "type": "string", "minLength": 1 },
+    "status": { "type": "string", "enum": ["completed", "failed", "partial"] },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "digest", "path"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "digest": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "os", "cpu", "memory", "toolchains"],
+      "properties": {
+        "mode": { "type": "string", "enum": ["native", "docker"] },
+        "os": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["platform", "release"],
+          "properties": {
+            "platform": { "type": "string" },
+            "release": { "type": "string" },
+            "distro": { "type": "string" }
+          }
+        },
+        "cpu": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["model", "coresLogical", "arch"],
+          "properties": {
+            "model": { "type": "string" },
+            "coresLogical": { "type": "integer", "minimum": 1 },
+            "arch": { "type": "string" }
+          }
+        },
+        "memory": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["totalBytes"],
+          "properties": {
+            "totalBytes": { "type": "number", "minimum": 0 }
+          }
+        },
+        "disk": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["workspacePath"],
+          "properties": {
+            "workspaceFs": { "type": "string" },
+            "workspacePath": { "type": "string" }
+          }
+        },
+        "toolchains": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "version"],
+            "properties": {
+              "path": { "type": "string" },
+              "version": { "type": "string" }
+            }
+          }
+        },
+        "docker": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "imageRef": { "type": "string" },
+            "imageDigest": { "type": "string" },
+            "containerRuntime": { "type": "string" },
+            "mount": { "type": "string" },
+            "cpus": { "type": "number" },
+            "memory": { "type": "string" },
+            "pidsLimit": { "type": "integer" },
+            "toolProvisioning": { "type": "string" }
+          }
+        }
+      }
+    },
+    "plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cellCount", "stageIds", "warmup", "measured"],
+      "properties": {
+        "cellCount": { "type": "integer", "minimum": 0 },
+        "stageIds": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "warmup": { "type": "integer", "minimum": 0 },
+        "measured": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "cellId",
+          "stageId",
+          "iteration",
+          "iterationKind",
+          "status",
+          "durationMs",
+          "metrics"
+        ],
+        "properties": {
+          "cellId": { "type": "string" },
+          "stageId": { "type": "string" },
+          "iteration": { "type": "integer", "minimum": 0 },
+          "iterationKind": { "type": "string", "enum": ["warmup", "measured"] },
+          "status": { "type": "string", "enum": ["passed", "failed", "skipped"] },
+          "durationMs": { "type": "number" },
+          "metrics": {
+            "type": "object",
+            "additionalProperties": { "type": "number" }
+          },
+          "artifacts": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "stdout": { "type": "string" },
+              "stderr": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "aggregates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["cellId", "stageId", "metric", "unit", "stats"],
+        "properties": {
+          "cellId": { "type": "string" },
+          "stageId": { "type": "string" },
+          "metric": { "type": "string" },
+          "unit": {
+            "type": "string",
+            "enum": ["ms", "bytes", "count", "percent", "ratio"]
+          },
+          "stats": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["count", "min", "max", "mean", "median", "p95", "stdev"],
+            "properties": {
+              "count": { "type": "integer", "minimum": 0 },
+              "min": { "type": "number" },
+              "max": { "type": "number" },
+              "mean": { "type": "number" },
+              "median": { "type": "number" },
+              "p95": { "type": "number" },
+              "stdev": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

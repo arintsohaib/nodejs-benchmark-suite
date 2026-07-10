@@ -1,0 +1,42 @@
+schemaVersion: 1
+id: node-ts-lib
+title: TypeScript library (tsc)
+description: >
+  Realistic single-package TypeScript library with deterministic generated modules
+  under src/generated/. Suitable for install / typecheck / tsc build matrices.
+engines:
+  node: "policy:lts-active"
+supports:
+  packageManagers: [npm, pnpm, yarn]
+  sizes: [tiny, small, medium, large]
+produces:
+  kind: library
+  scripts:
+    build: tsc -p tsconfig.json
+    typecheck: tsc -p tsconfig.json --noEmit
+sizes:
+  tiny:
+    fileCount: 2
+    packageCount: 1
+    tsComplexity: 1
+    dependencySet: minimal
+  small:
+    fileCount: 8
+    packageCount: 1
+    tsComplexity: 2
+    dependencySet: minimal
+  medium:
+    fileCount: 24
+    packageCount: 1
+    tsComplexity: 3
+    dependencySet: standard
+  large:
+    fileCount: 64
+    packageCount: 1
+    tsComplexity: 4
+    dependencySet: standard
+parameters:
+  - name: fileCount
+    type: integer
+  - name: tsComplexity
+    type: integer

@@ -1,0 +1,43 @@
+schemaVersion: 1
+id: nextjs-app
+title: Next.js App Router (TypeScript)
+description: >
+  Next.js App Router application with deterministic generated pages under app/gen/.
+  Intended for install / typecheck / next build matrices. Default CI must not run next build.
+engines:
+  node: "policy:lts-active"
+supports:
+  packageManagers: [npm, pnpm, yarn]
+  sizes: [tiny, small, medium, large]
+produces:
+  kind: application
+  scripts:
+    build: next build
+    typecheck: tsc -p tsconfig.json --noEmit
+    dev: next dev
+sizes:
+  tiny:
+    fileCount: 2
+    packageCount: 1
+    tsComplexity: 1
+    dependencySet: minimal
+  small:
+    fileCount: 6
+    packageCount: 1
+    tsComplexity: 2
+    dependencySet: minimal
+  medium:
+    fileCount: 16
+    packageCount: 1
+    tsComplexity: 3
+    dependencySet: standard
+  large:
+    fileCount: 40
+    packageCount: 1
+    tsComplexity: 4
+    dependencySet: standard
+parameters:
+  - name: fileCount
+    type: integer
+  - name: tsComplexity
+    type: integer

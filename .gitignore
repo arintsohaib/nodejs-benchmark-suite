@@ -9,3 +9,5 @@ reports/
 .env.local
 .DS_Store
 .vscode/settings.json
+.corepack/
+*.tsbuildinfo

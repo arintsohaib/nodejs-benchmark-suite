@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nodejs-benchmark-suite.local/schemas/profile.schema.json",
+  "title": "BenchmarkProfile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "workload", "stages", "iterations"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "minLength": 1
+    },
+    "description": { "type": "string" },
+    "workload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["template"],
+      "properties": {
+        "template": { "type": "string", "minLength": 1 },
+        "size": {
+          "type": "string",
+          "enum": ["tiny", "small", "medium", "large", "xlarge"]
+        },
+        "seed": { "type": "integer" },
+        "params": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "matrix": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": ["string", "number", "boolean"]
+        },
+        "minItems": 1
+      }
+    },
+    "stages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "action"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "action": { "type": "string", "minLength": 1 },
+          "cache": { "type": "string", "enum": ["cold", "warm"] },
+          "timeoutMs": { "type": "integer", "minimum": 1 },
+          "network": { "type": "boolean" },
+          "command": { "type": "string", "minLength": 1 },
+          "args": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "reset": {
+            "type": "string",
+            "enum": ["clean-install", "keep-node-modules", "purge-all"]
+          }
+        }
+      }
+    },
+    "runner": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": { "type": "string", "enum": ["native", "docker"] },
+        "native": { "type": "object", "additionalProperties": true },
+        "docker": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "imagePolicy": { "type": "string" },
+            "pull": { "type": "string", "enum": ["always", "if-missing", "never"] },
+            "mount": {
+              "type": "string",
+              "enum": ["bind", "named-volume", "copy-in", "tmpfs"]
+            },
+            "workdir": { "type": "string" },
+            "cpus": { "type": "number" },
+            "memory": { "type": "string" },
+            "pidsLimit": { "type": "integer" },
+            "network": { "type": "string" },
+            "removeContainers": {
+              "type": "string",
+              "enum": ["always", "on-success"]
+            },
+            "removeVolumes": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "collectors": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "reporting": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "formats": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["json", "markdown", "html"] }
+        }
+      }
+    },
+    "iterations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["measured"],
+      "properties": {
+        "warmup": { "type": "integer", "minimum": 0 },
+        "measured": { "type": "integer", "minimum": 1 }
+      }
+    }
+  }
+}

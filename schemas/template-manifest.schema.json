@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nodejs-benchmark-suite.local/schemas/template-manifest.schema.json",
+  "title": "TemplateManifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "title", "supports", "produces"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "minLength": 1
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "engines": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "supports": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sizes"],
+      "properties": {
+        "packageManagers": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "sizes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": ["tiny", "small", "medium", "large", "xlarge"]
+          }
+        }
+      }
+    },
+    "produces": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["library", "application", "workspace"] },
+        "scripts": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "sizes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "fileCount": { "type": "integer", "minimum": 0 },
+          "packageCount": { "type": "integer", "minimum": 1 },
+          "tsComplexity": { "type": "integer", "minimum": 0 },
+          "dependencySet": { "type": "string" }
+        }
+      }
+    },
+    "parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "type"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string", "enum": ["integer", "boolean", "string"] }
+        }
+      }
+    }
+  }
+}

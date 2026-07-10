@@ -1,0 +1,26 @@
+schemaVersion: 1
+id: cli-mvp-fail-fixture
+description: Fixture that fails the second stage (for continue-on-error / exit codes).
+workload:
+  template: static-empty
+  size: tiny
+stages:
+  - id: ok
+    action: raw.command
+    command: node
+    args:
+      - -e
+      - process.exit(0)
+    timeoutMs: 10000
+  - id: boom
+    action: raw.command
+    command: node
+    args:
+      - -e
+      - process.exit(2)
+    timeoutMs: 10000
+iterations:
+  warmup: 0
+  measured: 1
+runner:
+  type: native

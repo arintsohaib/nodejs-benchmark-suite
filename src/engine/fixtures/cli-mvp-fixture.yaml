@@ -1,0 +1,35 @@
+schemaVersion: 1
+id: cli-mvp-fixture
+description: >
+  S8 CLI fixture — trivial raw.command stages using Node only (no package manager).
+workload:
+  template: static-empty
+  size: tiny
+  seed: 1
+stages:
+  - id: noop
+    action: raw.command
+    command: node
+    args:
+      - -e
+      - process.exit(0)
+    timeoutMs: 10000
+  - id: hello
+    action: raw.command
+    command: node
+    args:
+      - -e
+      - process.stdout.write('ok'); process.exit(0)
+    timeoutMs: 10000
+iterations:
+  warmup: 0
+  measured: 1
+runner:
+  type: native
+metrics:
+  collectors:
+    - wall
+reporting:
+  formats:
+    - json
+    - markdown

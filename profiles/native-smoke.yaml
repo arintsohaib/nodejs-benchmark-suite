@@ -1,0 +1,29 @@
+schemaVersion: 1
+id: native-smoke
+description: >
+  M1 native smoke profile. Copies fixtures/native-smoke into the run workspace
+  and runs a trivial Node script (no package-manager install).
+workload:
+  template: fixtures/native-smoke
+  size: tiny
+  seed: 1
+stages:
+  - id: run-fixture
+    action: raw.command
+    command: node
+    args:
+      - index.js
+    timeoutMs: 15000
+iterations:
+  warmup: 0
+  measured: 1
+runner:
+  type: native
+metrics:
+  collectors:
+    - wall
+reporting:
+  formats:
+    - json
+    - markdown
+    - html
