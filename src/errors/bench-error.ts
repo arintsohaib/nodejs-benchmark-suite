@@ -10,6 +10,8 @@ export const ExitCode = {
   StageFailure: 4,
   DockerError: 5,
   PartialFailure: 6,
+  /** Report diff regression gate failed (`--fail-on-regression`). */
+  RegressionFailure: 7,
 } as const;
 
 export type ExitCode = (typeof ExitCode)[keyof typeof ExitCode];

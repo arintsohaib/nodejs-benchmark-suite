@@ -29,6 +29,25 @@ reporting:
   formats: [json, markdown]
 `;
 
+const IQR_PROFILE = `
+schemaVersion: 1
+id: iqr-sample
+workload:
+  template: node-ts-lib
+  size: tiny
+  seed: 1
+stages:
+  - id: noop
+    action: project.build
+iterations:
+  measured: 5
+runner:
+  type: native
+metrics:
+  collectors: [wall]
+  outlierRule: iqr
+`;
+
 describe("digestValue", () => {
   it("is stable regardless of key insertion order", () => {
     const a = digestValue({ b: 1, a: 2 });
@@ -47,6 +66,14 @@ describe("loadProfile", () => {
     assert.equal(loaded.profile.id, "foundation-sample");
     assert.equal(loaded.profile.schemaVersion, 1);
     assert.match(loaded.digest, /^[a-f0-9]{64}$/);
+  });
+
+  it("accepts metrics.outlierRule iqr", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "jsbench-profile-iqr-"));
+    const path = join(dir, "iqr.yaml");
+    await writeFile(path, IQR_PROFILE, "utf8");
+    const loaded = await loadProfile(path);
+    assert.equal(loaded.profile.metrics?.outlierRule, "iqr");
   });
 
   it("rejects invalid profiles", async () => {

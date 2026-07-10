@@ -75,4 +75,75 @@ describe("jsbench report", () => {
       await rm(root, { recursive: true, force: true });
     }
   });
+
+  it("exits 7 when --fail-on-regression thresholds are exceeded", async () => {
+    const root = await mkdtemp(join(tmpdir(), "jsbench-diff-gate-"));
+    try {
+      const leftDir = join(root, "left");
+      const rightDir = join(root, "right");
+      const outDir = join(root, "out");
+      await mkdir(leftDir);
+      await mkdir(rightDir);
+      const left = JSON.parse(await readFile(SAMPLE, "utf8")) as RunArtifact;
+      const right: RunArtifact = {
+        ...left,
+        runId: "right-run",
+        aggregates: left.aggregates.map((a) =>
+          a.stageId === "install" ? { ...a, stats: { ...a.stats, median: a.stats.median * 2 } } : a,
+        ),
+      };
+      await writeFile(join(leftDir, "run.json"), `${JSON.stringify(left)}\n`);
+      await writeFile(join(rightDir, "run.json"), `${JSON.stringify(right)}\n`);
+      const code = await runCli([
+        "report",
+        "diff",
+        leftDir,
+        rightDir,
+        "--out",
+        outDir,
+        "--metric",
+        "durationMs",
+        "--fail-on-regression",
+        "--max-percent-increase",
+        "5",
+        "--log-level",
+        "error",
+      ]);
+      assert.equal(code, 7);
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  });
+
+  it("passes the regression gate when increases stay within limits", async () => {
+    const root = await mkdtemp(join(tmpdir(), "jsbench-diff-gate-ok-"));
+    try {
+      const leftDir = join(root, "left");
+      const rightDir = join(root, "right");
+      const outDir = join(root, "out");
+      await mkdir(leftDir);
+      await mkdir(rightDir);
+      const left = JSON.parse(await readFile(SAMPLE, "utf8")) as RunArtifact;
+      await writeFile(join(leftDir, "run.json"), `${JSON.stringify(left)}\n`);
+      await writeFile(join(rightDir, "run.json"), `${JSON.stringify(left)}\n`);
+      const code = await runCli([
+        "report",
+        "diff",
+        leftDir,
+        rightDir,
+        "--out",
+        outDir,
+        "--fail-on-regression",
+        "--max-percent-increase",
+        "1",
+        "--max-absolute-increase",
+        "1",
+        "--log-level",
+        "error",
+      ]);
+      assert.equal(code, 0);
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  });
 });

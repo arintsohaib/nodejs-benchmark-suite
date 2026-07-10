@@ -33,8 +33,9 @@ Within suite major version **1.x** that advertises these integers as `1`:
 1. **Readers** of `run.json` may rely on required fields documented in [08_REPORTING.md](08_REPORTING.md) §3.
 2. **Writers** (this suite) may add **optional** properties without bumping `schemaVersion`.
 3. **Removing or renaming** required fields, or changing metric semantics for existing names, requires a **schemaVersion** (and suite **MAJOR**) bump.
-4. Profile `schemaVersion: 1` documents remain loadable; new optional profile keys may appear in minor releases.
+4. Profile `schemaVersion: 1` documents remain loadable; new optional profile keys may appear in minor releases (e.g. `metrics.outlierRule`).
 5. Built-in profile **ids** (`native-smoke`, `install-build-matrix`, `docker-smoke`) are stable; removal requires an alias period announced in the changelog.
+6. Optional run-artifact fields (e.g. `outlierFilter`) may appear without bumping `schemaVersion`.
 
 ---
 

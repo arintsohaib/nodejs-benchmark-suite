@@ -292,7 +292,9 @@ For single-runner profiles (e.g. M1 smoke), omit the `runner` matrix axis and se
 | `jsbench generate --profile <id>` | Materialize workloads only |
 | `jsbench run --profile <id>` | Full plan execution |
 | `jsbench report <run-id>` | Re-render reports from raw JSON |
-| `jsbench report diff <a> <b>` | Compare aggregates |
+| `jsbench report diff <a> <b>` | Compare aggregates; optional `--fail-on-regression` gate (exit 7) |
+| `jsbench replay <run>` | Reproduction hints from `run.json`; `--execute` re-runs matching profile |
+| `jsbench leaderboard` | Local-first index of runs → `leaderboard.json` + `.md` (no upload / no crowning) |
 | `jsbench version` | Suite version + optional dependency banner |
 
 Implementation note: use a typed CLI framework consistent with [11_DEPENDENCY_POLICY.md](11_DEPENDENCY_POLICY.md).
@@ -330,6 +332,7 @@ Implementation note: use a typed CLI framework consistent with [11_DEPENDENCY_PO
 | 4 | Stage command failure |
 | 5 | Docker error |
 | 6 | Partial run completed with failures (`--continue-on-error`) |
+| 7 | Report diff regression gate failed (`--fail-on-regression`) |
 
 ---
 

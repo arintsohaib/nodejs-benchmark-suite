@@ -113,7 +113,13 @@ export function renderMarkdownSummary(artifact: RunArtifact): string {
 
   lines.push("## Notes / Warnings");
   lines.push("");
-  if (artifact.warnings.length === 0) {
+  const outlierDrops = artifact.outlierFilter?.dropped.length ?? 0;
+  if (outlierDrops > 0 && artifact.outlierFilter !== undefined) {
+    lines.push(
+      `- Outlier filter \`${artifact.outlierFilter.rule}\` dropped ${outlierDrops} sample(s) from aggregates (see \`outlierFilter\` in run.json).`,
+    );
+  }
+  if (artifact.warnings.length === 0 && outlierDrops === 0) {
     lines.push("- (none)");
   } else {
     for (const warning of artifact.warnings) {

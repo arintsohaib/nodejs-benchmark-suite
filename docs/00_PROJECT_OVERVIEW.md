@@ -1,7 +1,7 @@
 # Project Overview
 
 **Project:** Node.js Benchmark Suite  
-**Status:** S18 / M6 exit complete — suite `1.0.0`
+**Status:** S23 complete (`nextjs-app-tailwind`); suite `1.0.0`
 **Document type:** Source of truth  
 **Last updated:** July 2026
 

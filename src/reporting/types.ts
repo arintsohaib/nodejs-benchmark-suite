@@ -86,6 +86,24 @@ export interface RunArtifact {
   readonly results: readonly StageResult[];
   readonly aggregates: readonly MetricAggregate[];
   readonly warnings: readonly string[];
+  /**
+   * Present when `metrics.outlierRule` filtered samples (S21).
+   * Always explicit — never silent drops.
+   */
+  readonly outlierFilter?: {
+    readonly rule: "iqr";
+    readonly dropped: ReadonlyArray<{
+      readonly cellId: string;
+      readonly stageId: string;
+      readonly metric: string;
+      readonly unit: string;
+      readonly iteration?: number;
+      readonly value: number;
+      readonly fenceLow: number;
+      readonly fenceHigh: number;
+      readonly reason: "below-fence" | "above-fence";
+    }>;
+  };
 }
 
 export interface Reporter {

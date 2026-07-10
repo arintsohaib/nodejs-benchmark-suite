@@ -34,10 +34,22 @@ const FILE_INVENTORY = {
     "package.json",
     "tsconfig.json",
   ],
+  "nextjs-app-tailwind": [
+    "app/gen/p000/page.tsx",
+    "app/gen/p001/page.tsx",
+    "app/globals.css",
+    "app/layout.tsx",
+    "app/page.tsx",
+    "next-env.d.ts",
+    "next.config.mjs",
+    "package.json",
+    "postcss.config.mjs",
+    "tsconfig.json",
+  ],
 } as const;
 
-describe("S11 template tiny snapshots", () => {
-  for (const templateId of ["node-ts-lib", "nextjs-app"] as const) {
+describe("template tiny snapshots", () => {
+  for (const templateId of ["node-ts-lib", "nextjs-app", "nextjs-app-tailwind"] as const) {
     it(`materializes ${templateId} tiny with stable digest and file inventory`, async () => {
       const calibration = JSON.parse(
         await readFile(join(ROOT, "profiles", "calibrated-digests.json"), "utf8"),

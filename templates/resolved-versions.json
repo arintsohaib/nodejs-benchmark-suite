@@ -1,5 +1,5 @@
 {
-  "comment": "Offline pins for policy:* specs at generation time. Calibrated for S17; refresh deliberately and re-baseline digests/snapshots.",
+  "comment": "Offline pins for policy:* specs at generation time. Calibrated for S17; Tailwind pins added S23. Refresh deliberately and re-baseline digests/snapshots.",
   "resolvedAt": "2026-07-11",
   "calibratedForSuite": "1.0.0",
   "packages": {
@@ -9,6 +9,9 @@
     "react-dom": "19.1.0",
     "@types/node": "22.15.30",
     "@types/react": "19.1.8",
-    "@types/react-dom": "19.1.6"
+    "@types/react-dom": "19.1.6",
+    "tailwindcss": "4.3.2",
+    "@tailwindcss/postcss": "4.3.2",
+    "postcss": "8.5.16"
   }
 }

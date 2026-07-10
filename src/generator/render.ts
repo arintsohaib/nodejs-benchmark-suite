@@ -78,6 +78,7 @@ async function renderLibraryTree(
 async function renderNextAppTree(
   workspacePath: string,
   params: ExpandedWorkloadParams,
+  templateId: string,
 ): Promise<void> {
   const genRoot = join(workspacePath, "app", "gen");
   await mkdir(genRoot, { recursive: true });
@@ -103,7 +104,7 @@ async function renderNextAppTree(
       "export default function Home() {",
       "  return (",
       "    <main>",
-      "      <h1>jsbench-nextjs-app</h1>",
+      `      <h1>jsbench-${templateId}</h1>`,
       "      <ul>",
       ...links,
       "      </ul>",
@@ -132,11 +133,11 @@ export async function renderTemplateTree(options: {
   if (kind === "library") {
     await renderLibraryTree(options.workspacePath, options.params);
   } else if (kind === "application") {
-    await renderNextAppTree(options.workspacePath, options.params);
+    await renderNextAppTree(options.workspacePath, options.params, options.template.manifest.id);
   } else {
     throw new BenchError(
       "VALIDATION_ERROR",
-      `Template kind "${kind}" is not supported by the S11 renderer`,
+      `Template kind "${kind}" is not supported by the generator renderer`,
       { templateId: options.template.manifest.id, kind },
     );
   }

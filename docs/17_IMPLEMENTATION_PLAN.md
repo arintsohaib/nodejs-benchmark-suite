@@ -1,6 +1,6 @@
 # Implementation Plan
 
-**Status:** Complete through S18 (`1.0.0`); post-1.0 work uses parking lot / new slices  
+**Status:** Complete through S23 (`nextjs-app-tailwind`); further work from parking lot / roadmap themes  
 **Last updated:** July 2026  
 **Companion docs:** [12_ROADMAP.md](12_ROADMAP.md) · [13_TASKS.md](13_TASKS.md) · [../AGENTS.md](../AGENTS.md)
 
@@ -85,6 +85,11 @@ flowchart TB
   S15 --> S16[S16_Hardening]
   S16 --> S17[S17_Calibrate_pins]
   S17 --> S18[S18_Release_1_0]
+  S18 --> S19[S19_CI_regression_gates]
+  S19 --> S20[S20_Replay_from_run_json]
+  S20 --> S21[S21_Opt_in_IQR_outliers]
+  S21 --> S22[S22_Local_leaderboard]
+  S22 --> S23[S23_Nextjs_Tailwind_template]
 ```
 
 ---
@@ -463,7 +468,7 @@ flowchart TB
 
 **Test gate:** Security-oriented unit tests; no P0 methodology bugs open.
 
-**Maps to:** T-M5-05..06 · Roadmap M5 exit (T-M5-07 deferred)
+**Maps to:** T-M5-05..06 · Roadmap M5 exit (T-M5-07 deferred at the time; Tailwind landed in S23)
 
 ---
 
@@ -499,6 +504,99 @@ flowchart TB
 
 ---
 
+### S19 — CI regression gates (post-1.0) ✅
+
+**Goal:** Fail CI (or local scripts) when a report diff exceeds explicit thresholds.
+
+**Work:**
+
+- `evaluateRegressionGate` on median deltas (percent and/or absolute)
+- `jsbench report diff --fail-on-regression` (+ threshold / metric / digest flags); exit code **7**
+- Deterministic CI smoke using fixture `run.json` copies
+- Docs: reporting + architecture exit codes
+
+**Test gate:** Unit tests for gate logic; CLI tests for exit 0/7; default CI green.
+
+**Maps to:** T-POST-01
+
+---
+
+### S20 — Replay from historical `run.json` (post-1.0) ✅
+
+**Goal:** Automate reproduction hints (and optional re-execution) from a prior run artifact.
+
+**Work:**
+
+- `buildReplayPlan` — toolchain `exact:` hints, profile id/digest, suggested commands
+- `jsbench replay <runDir|--from path>` (hints JSON)
+- `jsbench replay --execute` with digest check (`--force` to override)
+- CI smoke: hints mode against the verify-job native-smoke output
+
+**Test gate:** Unit tests for plan builder; CLI tests for hints / digest mismatch / matching execute.
+
+**Maps to:** T-POST-02
+
+---
+
+### S21 — Opt-in IQR outlier rules (post-1.0) ✅
+
+**Goal:** Explicit, documented outlier filtering — never silent.
+
+**Work:**
+
+- Profile `metrics.outlierRule: none|iqr` (optional; default none)
+- Tukey 1.5×IQR with nearest-rank Q1/Q3; skip groups with &lt;4 samples
+- `run.json` `outlierFilter.dropped[]` + warnings; raw `results` unchanged
+- Markdown notes when drops occurred
+
+**Test gate:** Unit tests for IQR keep/drop/skip; existing goldens unchanged (built-ins stay `none`).
+
+**Maps to:** T-POST-03
+
+---
+
+### S22 — Local-first leaderboard directory (post-1.0) ✅
+
+**Goal:** Optional shareable result index for community comparison — still local-first, no upload, no winners.
+
+**Work:**
+
+- `schemas/leaderboard.schema.json` + Ajv validation
+- `buildLeaderboard` / `renderLeaderboardMarkdown` (entries sorted by `runId`, not by performance)
+- Discover `run.json` under `--from` (default: config `outputDir`); write `leaderboard.json` + `leaderboard.md` under `--out` (default: `./leaderboard`)
+- CLI: `jsbench leaderboard [--from] [--out] [--metric]` (default metric `durationMs`)
+- Disclaimer: not a ranking; compare same profile digest
+
+**Test gate:** Unit + CLI tests; schema validation of written JSON.
+
+**Maps to:** T-POST-04
+
+---
+
+### S23 — `nextjs-app-tailwind` template (T-M5-07 partial) ✅
+
+**Goal:** Optional Next.js + Tailwind CSS v4 workload for install/typecheck/build matrices that exercise CSS tooling.
+
+**Work:**
+
+- Template `templates/nextjs-app-tailwind/` (`kind: application`, sizes mirrored from `nextjs-app`)
+- Tailwind v4 via `@import "tailwindcss"` + `@tailwindcss/postcss` + `postcss.config.mjs`
+- Offline pins: `tailwindcss`, `@tailwindcss/postcss`, `postcss` in `resolved-versions.json`
+- Tiny snapshot + calibrated digest (`nextjs-app-tailwind@tiny@1`)
+- **Not in this slice:** `pnpm-workspace` (remains parking lot)
+
+**Quality notes (post-S23 gate):**
+
+- Generated home `<h1>` uses `jsbench-<templateId>` (shared `renderNextAppTree`); `nextjs-app` digest unchanged
+- No built-in profile exercises this template yet; default CI does not run `next build`
+- Suggested follow-ups: optional profile for Tailwind matrices; `pnpm-workspace` (T-M5-07 remainder); or parking-lot `docker-stats` / Compose / Windows-macOS
+
+**Test gate:** Snapshot inventory + digest; no `next build` in default CI.
+
+**Maps to:** T-M5-07 (partial)
+
+---
+
 ## 6. Milestone ↔ Slice Map
 
 | Roadmap | Slices | Ship tag (suggested) |
@@ -510,6 +608,7 @@ flowchart TB
 | M4 | S14 | `v0.4.0` |
 | M5 | S15–S16 | `v0.5.0` |
 | M6 | S17–S18 | `v1.0.0` |
+| Post-1.0 | S19–S23+ | minor bumps as needed |
 
 ---
 
@@ -527,6 +626,11 @@ flowchart TB
 | S16 | Hardening (shell forbid, mount allowlist, overhead helper) |
 | S17 | Calibrated pins/digests + schema compatibility draft |
 | S18 | 1.0 supported surface frozen |
+| S19 | `report diff --fail-on-regression` (exit 7) |
+| S20 | `replay` hints + optional `--execute` |
+| S21 | Opt-in `outlierRule: iqr` with explicit drops |
+| S22 | Local `jsbench leaderboard` index (no upload / no winners) |
+| S23 | `nextjs-app-tailwind` template (Tailwind v4 pins) |
 
 Never leave `jsbench run` registered if it throws because reporter/runner imports are missing—wire commands only when their stack exists, or guard with feature flags.
 
@@ -536,8 +640,8 @@ Never leave `jsbench run` registered if it throws because reporter/runner import
 
 - Windows/macOS support
 - Compose multi-service stacks
-- Automatic outlier removal
-- Hosted result upload
+- Automatic outlier removal (silent); opt-in `outlierRule: iqr` is supported (S21)
+- Hosted result upload (local leaderboard index is supported — S22)
 - Claiming package-manager winners in output copy
 
 ---

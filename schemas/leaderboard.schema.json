@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nodejs-benchmark-suite.local/schemas/leaderboard.schema.json",
+  "title": "JsBenchLeaderboard",
+  "description": "Local-first index of run summaries for community comparison. No upload; no winner rankings.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "createdAt", "suiteVersion", "disclaimer", "entries"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "kind": { "type": "string", "const": "jsbench-leaderboard" },
+    "createdAt": { "type": "string", "minLength": 1 },
+    "suiteVersion": { "type": "string", "minLength": 1 },
+    "metricFilter": { "type": "string", "minLength": 1 },
+    "disclaimer": { "type": "string", "minLength": 1 },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["runId", "suiteVersion", "status", "profile", "environment", "medians"],
+        "properties": {
+          "runId": { "type": "string", "minLength": 1 },
+          "suiteVersion": { "type": "string", "minLength": 1 },
+          "status": { "type": "string", "enum": ["completed", "failed", "partial"] },
+          "profile": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "digest"],
+            "properties": {
+              "id": { "type": "string" },
+              "digest": { "type": "string" }
+            }
+          },
+          "environment": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["mode", "os", "cpu"],
+            "properties": {
+              "mode": { "type": "string", "enum": ["native", "docker"] },
+              "os": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["platform", "release"],
+                "properties": {
+                  "platform": { "type": "string" },
+                  "release": { "type": "string" },
+                  "distro": { "type": "string" }
+                }
+              },
+              "cpu": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["model", "coresLogical", "arch"],
+                "properties": {
+                  "model": { "type": "string" },
+                  "coresLogical": { "type": "integer", "minimum": 1 },
+                  "arch": { "type": "string" }
+                }
+              },
+              "docker": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "imageRef": { "type": "string" },
+                  "mount": { "type": "string" }
+                }
+              }
+            }
+          },
+          "medians": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["stageId", "metric", "cellId", "median", "unit"],
+              "properties": {
+                "stageId": { "type": "string" },
+                "metric": { "type": "string" },
+                "cellId": { "type": "string" },
+                "median": { "type": "number" },
+                "unit": { "type": "string" }
+              }
+            }
+          },
+          "sourcePath": { "type": "string" }
+        }
+      }
+    }
+  }
+}

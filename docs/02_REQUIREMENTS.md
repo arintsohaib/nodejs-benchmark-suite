@@ -12,7 +12,7 @@
 | ID | Requirement |
 |----|-------------|
 | FR-CLI-01 | Provide a single entrypoint CLI (name TBD at implementation; docs use `jsbench` as the working command). |
-| FR-CLI-02 | Support commands: `run`, `list-profiles`, `validate-profile`, `generate`, `report`, `doctor`, `version`. |
+| FR-CLI-02 | Support commands: `run`, `list-profiles`, `validate-profile`, `generate`, `report`, `replay`, `leaderboard`, `doctor`, `version`. |
 | FR-CLI-03 | Accept profile path or profile id; allow overrides for iterations, runners, package managers, and output directory. |
 | FR-CLI-04 | Exit non-zero on failed stages, invalid config, or missing prerequisites unless `--continue-on-error` is set. |
 | FR-CLI-05 | Support `--dry-run` that resolves the plan without executing timed stages. |

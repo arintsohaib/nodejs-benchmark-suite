@@ -78,6 +78,15 @@ export {
   nearestRankPercentile,
   type AggregateInputSample,
 } from "./metrics/stats.js";
+export {
+  applyOutlierRule,
+  IQR_FENCE_MULTIPLIER,
+  IQR_MIN_SAMPLES,
+  type OutlierRule,
+  type OutlierDrop,
+  type OutlierFilterResult,
+  type AggregateSampleWithIteration,
+} from "./metrics/outliers.js";
 
 export type {
   RunArtifact,
@@ -118,6 +127,34 @@ export {
   type WriteDiffOptions,
   type WriteDiffResult,
 } from "./reporting/diff.js";
+export {
+  evaluateRegressionGate,
+  type RegressionGateOptions,
+  type RegressionGateResult,
+  type RegressionViolation,
+} from "./reporting/regression-gate.js";
+export {
+  buildReplayPlan,
+  type ReplayPlan,
+  type ReplayToolchainHint,
+} from "./reporting/replay-plan.js";
+export {
+  buildLeaderboard,
+  renderLeaderboardMarkdown,
+  LEADERBOARD_SCHEMA_VERSION,
+  LEADERBOARD_KIND,
+  LEADERBOARD_DISCLAIMER,
+  type LeaderboardDocument,
+  type LeaderboardEntry,
+  type LeaderboardMedian,
+  type BuildLeaderboardOptions,
+} from "./reporting/leaderboard.js";
+export {
+  discoverRunArtifacts,
+  writeLeaderboard,
+  buildLeaderboardFromReports,
+} from "./reporting/write-leaderboard.js";
+export { assertValidLeaderboard, isValidLeaderboard } from "./reporting/validate-leaderboard.js";
 export { loadRunArtifact } from "./reporting/load-run-artifact.js";
 export { truncateText, renderCitationBlock } from "./reporting/format.js";
 export {

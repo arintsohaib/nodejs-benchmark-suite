@@ -102,6 +102,11 @@
         "collectors": {
           "type": "array",
           "items": { "type": "string", "minLength": 1 }
+        },
+        "outlierRule": {
+          "type": "string",
+          "enum": ["none", "iqr"],
+          "description": "Opt-in outlier filtering before aggregates. Default none. iqr uses Tukey fences and lists drops in the run artifact."
         }
       }
     },

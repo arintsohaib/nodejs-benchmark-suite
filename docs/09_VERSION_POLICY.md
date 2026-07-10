@@ -105,7 +105,7 @@ To reproduce a published run:
 3. Install toolchains matching `environment.toolchains` from `run.json` (`exact:` pins).
 4. Prefer the same OS major and similar CPU/storage class; expect variance otherwise.
 
-The suite may later add `jsbench replay --from run.json` to automate toolchain hints.
+The suite provides `jsbench replay <runDir|--from run.json>` for toolchain/profile reproduction hints, and `jsbench replay --execute` to re-run when the local profile digest still matches (use `--force` to override a mismatch).
 
 ---
 

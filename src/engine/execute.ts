@@ -5,6 +5,7 @@ import type { JsBenchConfig } from "../config/types.js";
 import { BenchError, ExitCode } from "../errors/bench-error.js";
 import type { Logger } from "../logging/logger.js";
 import { createMetricsAggregator } from "../metrics/aggregate.js";
+import { applyOutlierRule } from "../metrics/outliers.js";
 import {
   runWithOptionalCollectors,
   samplesToMetricsRecord,
@@ -319,22 +320,27 @@ export async function executeRun(options: ExecuteRunOptions): Promise<ExecuteRun
     }
   }
 
-  const samples: AggregateInputSample[] = [];
+  const samplesWithIteration: Array<AggregateInputSample & { iteration: number }> = [];
   for (const result of results) {
     if (result.iterationKind !== "measured" || result.status !== "passed") {
       continue;
     }
     for (const [metric, value] of Object.entries(result.metrics)) {
-      samples.push({
+      samplesWithIteration.push({
         cellId: result.cellId,
         stageId: result.stageId,
         metric,
         unit: unitForMetric(metric),
         value,
+        iteration: result.iteration,
       });
     }
   }
-  const aggregates = createMetricsAggregator().aggregate(samples);
+
+  const outlierRule = options.plan.profile.metrics?.outlierRule ?? "none";
+  const filtered = applyOutlierRule(samplesWithIteration, outlierRule);
+  warnings.push(...filtered.notes);
+  const aggregates = createMetricsAggregator().aggregate(filtered.kept);
   const status = deriveRunStatus(results);
   const finishedAt = new Date().toISOString();
 
@@ -367,6 +373,14 @@ export async function executeRun(options: ExecuteRunOptions): Promise<ExecuteRun
     results,
     aggregates,
     warnings,
+    ...(filtered.rule === "iqr"
+      ? {
+          outlierFilter: {
+            rule: "iqr" as const,
+            dropped: filtered.dropped,
+          },
+        }
+      : {}),
   };
 
   const written = await writeRunArtifact(artifact, outDir);

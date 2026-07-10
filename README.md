@@ -4,7 +4,7 @@ Open-source **engineering benchmark platform** for measuring modern JavaScript *
 
 Compare developer-loop cost across hardware, storage, operating systems, Docker setups, package managers, and project sizes—on **native Linux** and in **Docker**.
 
-**Status:** M0–**M6 complete** — suite `1.0.0` (S18)  
+**Status:** M0–**M6 complete** (`1.0.0`); **S19–S23** post-1.0 done  
 **Suite version:** `1.0.0` (tag: `v1.0.0`)
 
 **AI agents:** follow [AGENTS.md](AGENTS.md) (required reading and milestone workflow).
@@ -35,10 +35,12 @@ This is **not** a web application, demo, or HTTP load tester. It is a CLI labora
 | `jsbench validate-profile <path\|id>` | Available |
 | `jsbench run --profile <path\|id> --dry-run` | Available |
 | `jsbench run --profile <path\|id>` | Available (native + Docker) |
-| `jsbench generate --template <id>` | Available (`fixture-lib`, `node-ts-lib`, `nextjs-app`) |
+| `jsbench generate --template <id>` | Available (`fixture-lib`, `node-ts-lib`, `nextjs-app`, `nextjs-app-tailwind`) |
 | `jsbench list-profiles` | Available |
 | `report` | Re-render Markdown/HTML from a run directory |
-| `report diff` | Compare two runs → `diff.md` + `diff.json` |
+| `report diff` | Compare two runs → `diff.md` + `diff.json`; optional `--fail-on-regression` (exit 7) |
+| `replay` | Reproduction hints from `run.json`; optional `--execute` |
+| `leaderboard` | Local-first index of runs → `leaderboard.json` + `.md` (no upload) |
 
 Also available as a library via package exports: config, profiles, metrics, native runner, reporting, `executeRun` / `runCli`.
 
@@ -99,6 +101,9 @@ node dist/cli.js generate --template node-ts-lib --size tiny --seed 1
 
 # Generate a Next.js App Router workspace (materialize only — no next build in default CI)
 node dist/cli.js generate --template nextjs-app --size tiny --seed 1
+
+# Next.js + Tailwind CSS v4 (PostCSS)
+node dist/cli.js generate --template nextjs-app-tailwind --size tiny --seed 1
 ```
 
 ---
@@ -126,6 +131,32 @@ node dist/cli.js report ./reports/<run-id>
 
 # Diff two runs
 node dist/cli.js report diff ./reports/<runA> ./reports/<runB> --out ./diff-out
+
+# CI regression gate (exit 7 on threshold breach)
+node dist/cli.js report diff ./baseline ./reports/<run-id> \
+  --metric durationMs \
+  --fail-on-regression \
+  --max-percent-increase 10 \
+  --max-absolute-increase 50 \
+  --require-same-profile-digest
+```
+
+### Replay a historical run
+
+```bash
+# Print toolchain exact: hints + suggested commands (stdout JSON)
+node dist/cli.js replay ./reports/<run-id>
+# or: node dist/cli.js replay --from ./reports/<run-id>/run.json
+
+# Re-execute when the local profile digest still matches
+node dist/cli.js replay ./reports/<run-id> --execute
+```
+
+### Local leaderboard index
+
+```bash
+# Index all run.json under ./reports into ./leaderboard (no upload)
+node dist/cli.js leaderboard --from ./reports --out ./leaderboard
 ```
 
 Enable optional collectors in a profile (`rusage`, `disk-usage`) and/or load plugins from config:
@@ -149,6 +180,7 @@ Honest comparisons require matching methodology. When citing or sharing results:
 5. **Pins** — fixture deps come from `templates/resolved-versions.json`; Docker images from `docker/resolved-images.json`.
 6. **Attach `run.json`** — Markdown/HTML include a Citation section; prefer the immutable JSON as the source of truth.
 7. **No winner banners** — the suite does not crown package managers or hardware.
+8. **Outliers** — default aggregates use all measured samples; `metrics.outlierRule: iqr` is opt-in and always lists drops in `run.json`.
 
 Schema compatibility draft: [docs/18_SCHEMA_COMPATIBILITY.md](docs/18_SCHEMA_COMPATIBILITY.md).
 
@@ -247,7 +279,7 @@ nodejs-benchmark-suite/
 ├── profiles/       # Built-in profiles (incl. native-smoke)
 ├── fixtures/       # Static workloads (pre-generator)
 ├── docker/         # Image policy pins (+ future Dockerfiles)
-├── templates/      # Workload templates (fixture-lib, node-ts-lib, nextjs-app)
+├── templates/      # Workload templates (fixture-lib, node-ts-lib, nextjs-app, nextjs-app-tailwind)
 ├── packages/       # Deferred monorepo split (see packages/README.md)
 ├── docker/         # Runner images / compose (future)
 ├── scripts/        # Maintainer scripts (future)
@@ -270,6 +302,7 @@ nodejs-benchmark-suite/
 | **M4 (S14)** | HTML reports + run diffs — **done** |
 | **M5 (S15–S16)** | Plugins + collectors + hardening — **done** |
 | **M6 (S17–S18)** | Calibration + release `1.0.0` — **done** |
+| **Post-1.0 (S19–S23)** | Regression gates, `replay`, IQR, leaderboard, Tailwind template — **done** |
 
 Details: [docs/12_ROADMAP.md](docs/12_ROADMAP.md) · Tasks: [docs/13_TASKS.md](docs/13_TASKS.md) · Slices: [docs/17_IMPLEMENTATION_PLAN.md](docs/17_IMPLEMENTATION_PLAN.md)
 

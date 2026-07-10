@@ -1,6 +1,6 @@
 # Task Tracking
 
-**Status:** S18 complete (M6 exit); suite `1.0.0` — post-1.0 via parking lot / roadmap themes  
+**Status:** S23 complete (`nextjs-app-tailwind`); suite `1.0.0` — further post-1.0 via parking lot  
 **Last updated:** July 2026  
 **How to use:** Move items across status sections; reference task ids in commits/PRs.  
 **Engineering sequence:** Prefer slices **S1–S18** in [17_IMPLEMENTATION_PLAN.md](17_IMPLEMENTATION_PLAN.md) for commit boundaries.  
@@ -120,7 +120,7 @@
 | T-M5-04 | Sample external plugin documentation | done (S15) |
 | T-M5-05 | Security pass: shell forbid, mount allowlists | done (S16) |
 | T-M5-06 | Orchestration overhead measurement | done (S16) |
-| T-M5-07 | Additional templates (Tailwind / workspace) as capacity allows | deferred (parking lot; not required for M5 exit) |
+| T-M5-07 | Additional templates (Tailwind / workspace) as capacity allows | partial (S23: `nextjs-app-tailwind`; `pnpm-workspace` still parking lot) |
 
 ---
 
@@ -133,6 +133,17 @@
 | T-M6-03 | Full tutorial polish in README | done (S17) |
 | T-M6-04 | Release `1.0.0` + changelog entry | done (S18) |
 | T-M6-05 | Tag and publish package (if npm publish desired) | done (tag `v1.0.0`; npm publish deferred — optional) |
+
+---
+
+## Post-1.0
+
+| ID | Task | Status |
+|----|------|--------|
+| T-POST-01 | CI regression gates via `report diff` thresholds | done (S19) |
+| T-POST-02 | `replay` from historical `run.json` | done (S20) |
+| T-POST-03 | Opt-in statistical outlier rules (`outlierRule: iqr`) | done (S21) |
+| T-POST-04 | Optional local-first leaderboard result directory | done (S22) |
 
 ---
 
@@ -165,14 +176,28 @@ Record architecture choices here as they are made during implementation:
 | 2026-07-11 | S16: shell forbid audit; Docker mount allowlist under workspaceRoot; NFR-03 overhead helper; templates deferred | M5 exit without optional template scope creep |
 | 2026-07-11 | S17: calibrated digests + pin metadata; schema compatibility draft; README methodology; dry-run all built-ins | Publishable profile baseline before 1.0 tag |
 | 2026-07-11 | S18: suite `1.0.0`; freeze schema compatibility; changelog release; tag `v1.0.0`; skip optional npm publish | M6 exit; publish when maintainers choose |
+| 2026-07-11 | S19: `report diff --fail-on-regression` + exit 7; deterministic CI fixture gate | Post-1.0 methodology gate without flaky live timing |
+| 2026-07-11 | S20: `jsbench replay` hints + `--execute` with profile digest check | Automate reproduction path from version policy §6 |
+| 2026-07-11 | S21: opt-in `metrics.outlierRule: iqr`; explicit `outlierFilter` + warnings; never silent | Methodology honesty; matches metrics §9 |
+| 2026-07-11 | S22: local `jsbench leaderboard` index; no upload; entries by runId not performance | Community share format without crowning winners |
+| 2026-07-11 | S23: `nextjs-app-tailwind` (Tailwind v4 PostCSS); defer `pnpm-workspace` | Expand install/build realism; one template per slice |
+| 2026-07-11 | Post-S23 gate: home h1 = `jsbench-<templateId>` in application renderer | Fixes Tailwind label mismatch without changing `nextjs-app` digest |
 
 ---
 
 ## Parking Lot
 
 - Windows/macOS runners
-- Result upload / leaderboard format
+- Result *upload* (local leaderboard format done — S22)
 - Compose multi-service fixtures
-- Automatic outlier rejection
-- `replay` command from historical `run.json`
-- Optional templates: Tailwind / pnpm-workspace (T-M5-07) — follow-up when capacity allows
+- Optional template: `pnpm-workspace` (remainder of T-M5-07)
+- Optional built-in profile for `nextjs-app-tailwind` matrices
+- `docker-stats` collector (metrics §5.4)
+
+### Recorded risks / recommendations (post-1.0)
+
+| Item | Notes |
+|------|-------|
+| S22 leaderboard | Discovery depth capped; empty indexes valid; sharing is manual (no upload) |
+| S23 Tailwind | No profile yet; no `next build` in CI; refresh pins carefully and re-baseline digests |
+| Next suggested | `pnpm-workspace` **or** `docker-stats` / Compose / OS runners per roadmap priority |

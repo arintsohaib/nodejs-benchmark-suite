@@ -1,6 +1,6 @@
 # Metrics Engine
 
-**Status:** Partial — wall + rusage + disk-usage (S15); docker-stats later  
+**Status:** Partial — wall + rusage + disk-usage (S15); opt-in IQR outliers (S21); docker-stats later  
 **Last updated:** July 2026
 
 ---
@@ -152,8 +152,20 @@ JSON Schema versioning: `metricsSchemaVersion` integer on the artifact.
 
 ## 9. Outliers
 
-v1: **no automatic outlier removal**.  
-Optional later: profile flag `outlierRule: iqr` with explicit listing of dropped iterations in the artifact.
+Default: **no automatic outlier removal**.
+
+Opt-in (S21): set `metrics.outlierRule: iqr` on a profile to apply Tukey fences (1.5×IQR) using nearest-rank Q1/Q3 before primary aggregates.
+
+- Groups with fewer than **4** measured samples are left unchanged (noted in `warnings`).
+- Dropped samples are listed in `run.json` under `outlierFilter.dropped` (iteration, value, fences, reason) and summarized in `warnings`.
+- Raw `results[]` are never rewritten — only aggregates exclude dropped values.
+- If filtering would remove every sample in a group, all values are kept and a warning is recorded.
+
+```yaml
+metrics:
+  collectors: [wall]
+  outlierRule: iqr
+```
 
 ---
 

@@ -4,6 +4,7 @@ dist/
 coverage/
 generated/
 reports/
+leaderboard/
 *.log
 .env
 .env.local

@@ -1,6 +1,6 @@
 # Reporting Engine
 
-**Status:** Complete for v1 Markdown/HTML/diff (S14)  
+**Status:** Complete for v1 Markdown/HTML/diff (S14); regression gate (S19); local leaderboard (S22)  
 **Last updated:** July 2026  
 **Owner:** Reporting maintainers
 
@@ -40,6 +40,8 @@ Library API: `writeRunArtifact(artifact, outDir)` writes `manifest.json`, `run.j
 
 `jsbench report diff` writes `diff.md` + `diff.json` under `--out` (default `diff-<left>-vs-<right>/`).
 
+`jsbench leaderboard` writes a **local-first** community index (`leaderboard.json` + `leaderboard.md`) under `--out` (default `./leaderboard`). It does **not** upload results and does **not** rank winners. Schema: `schemas/leaderboard.schema.json`.
+
 ---
 
 ## 3. `run.json` Contract
@@ -58,6 +60,7 @@ Required top-level fields (JSON Schema: `schemas/run-artifact.schema.json`):
 - `results` array of stage results
 - `aggregates` array
 - `warnings` array
+- optional `outlierFilter` when `metrics.outlierRule: iqr` dropped samples (S21)
 
 This file is immutable once finalized. Re-rendering reports must not alter `run.json`.
 
@@ -131,6 +134,30 @@ Out of scope for v1: interactive SPAs, server-side dashboards.
 - Absolute and percent delta on median
 - Flag missing cells on either side (`presence`: `both` | `left-only` | `right-only`)
 - Emit `diff.md` + `diff.json`
+
+### Regression gate (S19)
+
+Optional CI-oriented thresholds on the same diff:
+
+```bash
+jsbench report diff baseline/ current/ \
+  --metric durationMs \
+  --fail-on-regression \
+  --max-percent-increase 10 \
+  --max-absolute-increase 50 \
+  --require-same-profile-digest
+```
+
+| Flag | Role |
+|------|------|
+| `--fail-on-regression` | Enable gate; exit **7** when violated |
+| `--max-percent-increase <n>` | Max allowed median % increase (right vs left) |
+| `--max-absolute-increase <n>` | Max allowed median absolute increase |
+| `--metric <name>` | Limit diff + gate to one metric (e.g. `durationMs`) |
+| `--no-fail-on-missing` | Do not fail on left-only / right-only rows |
+| `--require-same-profile-digest` | Fail when profile digests differ |
+
+At least one of `--max-percent-increase` / `--max-absolute-increase` is required with `--fail-on-regression`. Violations are included in the JSON stdout under `gate`. Prefer comparing a checked-in baseline `run.json` to a fresh run (or two fixtures) rather than two live noisy runs without generous thresholds.
 
 ---
 
@@ -210,6 +237,8 @@ Reporters must apply the same env redaction rules as the engine before embedding
 - Golden-file tests for Markdown/HTML given a fixture `run.json` (`src/reporting/fixtures/`)
 - Schema validation of `run.json` fixtures
 - Diff tests with known deltas (`sample-diff.golden.md` / `.json`)
+- Regression gate unit + CLI tests (`evaluateRegressionGate`, exit code 7)
+- Leaderboard builder + CLI tests (`buildLeaderboard`, `jsbench leaderboard`)
 
 ---
 
@@ -217,4 +246,5 @@ Reporters must apply the same env redaction rules as the engine before embedding
 
 - Metrics: [07_METRICS_ENGINE.md](07_METRICS_ENGINE.md)
 - Architecture: [03_ARCHITECTURE.md](03_ARCHITECTURE.md)
-- Implementation: [17_IMPLEMENTATION_PLAN.md](17_IMPLEMENTATION_PLAN.md) S7, S14
+- Implementation: [17_IMPLEMENTATION_PLAN.md](17_IMPLEMENTATION_PLAN.md) S7, S14, S19, S22
+- Schema: [schemas/leaderboard.schema.json](../schemas/leaderboard.schema.json)

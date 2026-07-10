@@ -1,7 +1,7 @@
 # Contributing
 
 **Last updated:** July 2026  
-**Status:** S18 / M6 exit complete — suite `1.0.0`. New work: parking lot or post-1.0 roadmap themes.
+**Status:** S23 complete — suite `1.0.0`. New work: parking lot or post-1.0 roadmap themes.
 
 Thank you for helping build a trustworthy JS development benchmark platform.
 

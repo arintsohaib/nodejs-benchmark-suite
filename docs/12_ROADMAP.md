@@ -1,6 +1,6 @@
 # Roadmap
 
-**Status:** M0–**M6 done** — suite `1.0.0` shipped; see §3 for post-1.0 themes  
+**Status:** M0–**M6 done** (`1.0.0`); post-1.0 S19–S23 done — see §3 for remaining themes  
 **Last updated:** July 2026
 
 ---
@@ -164,7 +164,7 @@ flowchart LR
 
 - Collector/reporter plugin loading — **done (S15)**
 - Additional collectors (`rusage`, `disk-usage`) — **done (S15)**
-- Workspace templates for Tailwind / workspace packages — **deferred** (parking lot)
+- Workspace templates for Tailwind / workspace packages — **partial** (`nextjs-app-tailwind` S23; `pnpm-workspace` deferred)
 - Security review of shell/docker paths — **done (S16)**
 - Performance pass on orchestration overhead — **done (S16)**
 
@@ -202,10 +202,10 @@ flowchart LR
 
 - macOS / Windows runners (methodology adaptations)
 - Remote agent mode for lab farms
-- Regression gates in CI (threshold diffs)
-- Optional result directory format for community leaderboards (still local-first)
+- Regression gates in CI (threshold diffs) — **done (S19)**
+- Optional result directory format for community leaderboards (still local-first) — **done (S22)**
 - Compose-based multi-service fixtures
-- Statistical outlier rules (explicit opt-in)
+- Statistical outlier rules (explicit opt-in) — **done (S21)**
 
 ---
 

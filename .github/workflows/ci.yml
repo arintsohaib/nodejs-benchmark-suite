@@ -62,6 +62,21 @@ jobs:
           node dist/cli.js run --profile install-build-matrix --dry-run
           node dist/cli.js run --profile docker-smoke --dry-run
           node dist/cli.js run --profile native-smoke --output-dir /tmp/jsbench-ci-reports --workspace-root /tmp/jsbench-ci-generated --log-level warn
+          # Deterministic regression-gate smoke (fixture vs identical copy; exit 0)
+          mkdir -p /tmp/jsbench-gate-left /tmp/jsbench-gate-right
+          cp src/reporting/fixtures/sample-run.json /tmp/jsbench-gate-left/run.json
+          cp src/reporting/fixtures/sample-run.json /tmp/jsbench-gate-right/run.json
+          node dist/cli.js report diff /tmp/jsbench-gate-left /tmp/jsbench-gate-right \
+            --out /tmp/jsbench-gate-out \
+            --metric durationMs \
+            --fail-on-regression \
+            --max-percent-increase 1 \
+            --max-absolute-increase 1 \
+            --require-same-profile-digest \
+            --log-level warn
+          RUN_DIR=$(find /tmp/jsbench-ci-reports -mindepth 1 -maxdepth 1 -type d | head -n 1)
+          test -n "$RUN_DIR"
+          node dist/cli.js replay --from "$RUN_DIR" --log-level warn
 
   native-smoke:
     if: github.event_name == 'workflow_dispatch' && inputs.native_smoke

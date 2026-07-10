@@ -11,6 +11,23 @@ Schema compatibility: [18_SCHEMA_COMPATIBILITY.md](18_SCHEMA_COMPATIBILITY.md).
 
 ## [Unreleased]
 
+### Added
+
+- **S19:** `jsbench report diff --fail-on-regression` with `--max-percent-increase` / `--max-absolute-increase` (exit code **7**); `evaluateRegressionGate`; deterministic CI fixture gate smoke.
+- **S20:** `jsbench replay <runDir|--from path>` reproduction hints (`exact:` toolchain pins); `--execute` re-runs when profile digest matches (`--force` to override).
+- **S21:** Opt-in `metrics.outlierRule: iqr` (Tukey fences); `outlierFilter.dropped` in `run.json` + warnings; raw results unchanged.
+- **S22:** `jsbench leaderboard` writes local-first `leaderboard.json` + `leaderboard.md` (`schemas/leaderboard.schema.json`); no upload; no winner rankings.
+- **S23:** Template `nextjs-app-tailwind` (Tailwind CSS v4 + PostCSS); pins in `resolved-versions.json`; tiny digest calibrated.
+
+### Changed
+
+- Architecture exit-code table documents code 7 (regression gate).
+- Version policy §6 documents `replay` instead of “may later add”.
+- Metrics §9 documents opt-in IQR (no longer “optional later”).
+- FR-CLI-02 / reporting docs include `leaderboard`.
+- Generator template table marks `nextjs-app-tailwind` done; `pnpm-workspace` remains deferred.
+- Application renderer home title uses `jsbench-<templateId>` (post-S23 quality gate; `nextjs-app` digest unchanged).
+
 ---
 
 ## [1.0.0] — 2026-07-11

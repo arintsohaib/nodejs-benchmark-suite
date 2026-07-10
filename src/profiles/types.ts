@@ -42,6 +42,11 @@ export interface RunnerSpec {
 
 export interface MetricsSpec {
   readonly collectors?: readonly string[];
+  /**
+   * Opt-in outlier filtering before primary aggregates (S21).
+   * Default / omitted: `none` (no samples dropped).
+   */
+  readonly outlierRule?: "none" | "iqr";
 }
 
 export interface ReportingSpec {

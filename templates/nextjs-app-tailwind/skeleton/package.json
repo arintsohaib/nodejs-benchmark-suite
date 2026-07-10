@@ -1,0 +1,25 @@
+{
+  "name": "jsbench-nextjs-app-tailwind",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "next": "policy:latest-stable",
+    "react": "policy:latest-stable",
+    "react-dom": "policy:latest-stable"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "policy:latest-stable",
+    "@types/node": "policy:latest-stable",
+    "@types/react": "policy:latest-stable",
+    "@types/react-dom": "policy:latest-stable",
+    "postcss": "policy:latest-stable",
+    "tailwindcss": "policy:latest-stable",
+    "typescript": "policy:latest-stable"
+  }
+}

@@ -4,7 +4,14 @@ import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { runDoctor } from "./cli/doctor.js";
 import { listProfiles } from "./cli/list-profiles.js";
-import { cmdReportDiff, cmdReportRerender, parseReportArgs } from "./commands/report.js";
+import { cmdLeaderboard } from "./commands/leaderboard.js";
+import { cmdReplay } from "./commands/replay.js";
+import {
+  cmdReportDiff,
+  cmdReportRerender,
+  parseOptionalNumberFlag,
+  parseReportArgs,
+} from "./commands/report.js";
 import { loadConfig } from "./config/load-config.js";
 import { isLogLevel } from "./config/parse-helpers.js";
 import type { JsBenchConfig } from "./config/types.js";
@@ -38,6 +45,9 @@ function printHelp(): void {
     "                          Materialize a deterministic workspace",
     "  report <runDir>         Re-render summary.md + index.html from run.json",
     "  report diff <a> <b>     Compare two runs; write diff.md + diff.json",
+    "                          Optional regression gate: --fail-on-regression",
+    "  replay <runDir>         Reproduction hints from run.json (--execute to re-run)",
+    "  leaderboard             Index local runs into leaderboard.json + .md (no upload)",
     "",
     "Global options:",
     "  --config <path>         Path to jsbench.config.yaml",
@@ -55,10 +65,26 @@ function printHelp(): void {
     "  --template <id>         Template id under templates/ (required)",
     "  --size <preset>         tiny|small|medium|large|xlarge (default: tiny)",
     "  --seed <n>              Deterministic seed (default: 1)",
-    "  --out <path>            Output workspace directory (generate) or diff dir (report diff)",
+    "  --out <path>            Output workspace directory (generate) or diff/leaderboard dir",
     "",
     "Report options:",
     "  --out <path>            Output directory for report diff (default: diff-<left>-vs-<right>)",
+    "  --metric <name>         Diff/gate/leaderboard metric filter (e.g. durationMs)",
+    "  --fail-on-regression    Exit 7 when thresholds are exceeded",
+    "  --max-percent-increase <n>  Max allowed median % increase (right vs left)",
+    "  --max-absolute-increase <n> Max allowed median absolute increase",
+    "  --no-fail-on-missing    Do not fail the gate on left-only/right-only rows",
+    "  --require-same-profile-digest  Fail gate when profile digests differ",
+    "",
+    "Replay options:",
+    "  --from <path>           Path to run dir or run.json (alternative to positional)",
+    "  --execute               Re-run the historical profile after digest check",
+    "  --force                 Allow --execute when local profile digest differs",
+    "",
+    "Leaderboard options:",
+    "  --from <path>           Reports root (or single run.json); default: config outputDir",
+    "  --out <path>            Output directory (default: ./leaderboard)",
+    "  --metric <name>         Median metric to index (default: durationMs)",
   ];
   process.stdout.write(`${lines.join("\n")}\n`);
 }
@@ -222,6 +248,15 @@ async function main(argv: readonly string[]): Promise<number> {
       size: { type: "string", default: "tiny" },
       seed: { type: "string", default: "1" },
       out: { type: "string" },
+      metric: { type: "string" },
+      "fail-on-regression": { type: "boolean", default: false },
+      "max-percent-increase": { type: "string" },
+      "max-absolute-increase": { type: "string" },
+      "fail-on-missing": { type: "boolean", default: true },
+      "require-same-profile-digest": { type: "boolean", default: false },
+      from: { type: "string" },
+      execute: { type: "boolean", default: false },
+      force: { type: "boolean", default: false },
     },
     allowPositionals: true,
     strict: true,
@@ -328,15 +363,64 @@ async function main(argv: readonly string[]): Promise<number> {
     case "report": {
       const parsed = parseReportArgs(positionals);
       if (parsed.mode === "diff") {
+        const maxPercentIncrease = parseOptionalNumberFlag(
+          values["max-percent-increase"],
+          "--max-percent-increase",
+        );
+        const maxAbsoluteIncrease = parseOptionalNumberFlag(
+          values["max-absolute-increase"],
+          "--max-absolute-increase",
+        );
         return await cmdReportDiff(
           parsed.leftPath as string,
           parsed.rightPath as string,
-          { ...(values.out !== undefined ? { out: values.out } : {}) },
+          {
+            ...(values.out !== undefined ? { out: values.out } : {}),
+            ...(values.metric !== undefined ? { metric: values.metric } : {}),
+            ...(values["fail-on-regression"] === true ? { failOnRegression: true } : {}),
+            ...(maxPercentIncrease !== undefined ? { maxPercentIncrease } : {}),
+            ...(maxAbsoluteIncrease !== undefined ? { maxAbsoluteIncrease } : {}),
+            ...(values["fail-on-missing"] === false ? { failOnMissing: false } : {}),
+            ...(values["require-same-profile-digest"] === true
+              ? { requireSameProfileDigest: true }
+              : {}),
+          },
           config,
           logger,
         );
       }
       return await cmdReportRerender(parsed.runPath as string, config, logger);
+    }
+    case "replay": {
+      const runPath = values.from ?? positionals[1];
+      if (runPath === undefined) {
+        throw new BenchError(
+          "INVALID_CONFIG",
+          "Usage: jsbench replay <runDir|run.json> | jsbench replay --from <path>",
+        );
+      }
+      return await cmdReplay(
+        runPath,
+        {
+          ...(values.execute === true ? { execute: true } : {}),
+          ...(values.force === true ? { force: true } : {}),
+          ...(values["continue-on-error"] === true ? { continueOnError: true } : {}),
+        },
+        config,
+        logger,
+      );
+    }
+    case "leaderboard": {
+      const fromPath = values.from ?? positionals[1] ?? config.outputDir;
+      return await cmdLeaderboard(
+        {
+          from: fromPath,
+          ...(values.out !== undefined ? { out: values.out } : {}),
+          ...(values.metric !== undefined ? { metric: values.metric } : {}),
+        },
+        config,
+        logger,
+      );
     }
     default:
       throw new BenchError("INVALID_CONFIG", `Unknown command: ${command}`, { command });
