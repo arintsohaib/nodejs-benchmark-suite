@@ -45,6 +45,7 @@ export function renderCitationBlock(options: {
   readonly profileDigest: string;
   readonly mode: string;
 }): string {
+  const tier = formatProfileTierLabel(inferProfileTier(options.profileId));
   return [
     "## Citation",
     "",
@@ -52,7 +53,7 @@ export function renderCitationBlock(options: {
     "",
     `- Suite version: \`${options.suiteVersion}\``,
     `- Run id: \`${options.runId}\``,
-    `- Profile: \`${options.profileId}\` (digest \`${options.profileDigest}\`)`,
+    `- Profile: \`${options.profileId}\` (digest \`${options.profileDigest}\`, tier: ${tier})`,
     `- Runner mode: ${options.mode}`,
     "- Hardware / OS summary from the Environment section",
     "- Cold/warm and network policy from the profile stages",
@@ -61,4 +62,33 @@ export function renderCitationBlock(options: {
     "Do not claim package-manager or hardware “winners” from a single run.",
     "",
   ].join("\n");
+}
+
+/** Official built-in profile speed/intent tier (derived from profile id). */
+export type ProfileTier = "smoke" | "benchmark" | "benchmark-slow" | "custom";
+
+export function inferProfileTier(profileId: string): ProfileTier {
+  if (profileId.endsWith("-benchmark-slow")) {
+    return "benchmark-slow";
+  }
+  if (profileId.endsWith("-benchmark") || profileId === "install-build-matrix") {
+    return "benchmark";
+  }
+  if (profileId.endsWith("-smoke")) {
+    return "smoke";
+  }
+  return "custom";
+}
+
+export function formatProfileTierLabel(tier: ProfileTier): string {
+  switch (tier) {
+    case "smoke":
+      return "smoke (fast)";
+    case "benchmark":
+      return "benchmark (standard)";
+    case "benchmark-slow":
+      return "benchmark-slow (optional)";
+    default:
+      return "custom / unofficial";
+  }
 }

@@ -11,6 +11,16 @@ Schema compatibility: [18_SCHEMA_COMPATIBILITY.md](18_SCHEMA_COMPATIBILITY.md).
 
 ## [Unreleased]
 
+### Notes
+
+- Final `1.1.0` (non-RC) cut pending hardware validation and maintainer approval. See [19_RELEASE_CANDIDATE_CHECKLIST.md](19_RELEASE_CANDIDATE_CHECKLIST.md) and [20_HARDWARE_VALIDATION_PLAN.md](20_HARDWARE_VALIDATION_PLAN.md).
+
+---
+
+## [1.1.0-rc.1] — 2026-07-11
+
+First **1.1.0** release candidate. Schema integers remain **v1** (additive 1.x changes only). Not a git tag in-repo until maintainers approve; do not treat as final `1.1.0`.
+
 ### Added
 
 - **S19:** `jsbench report diff --fail-on-regression` with `--max-percent-increase` / `--max-absolute-increase` (exit code **7**); `evaluateRegressionGate`; deterministic CI fixture gate smoke.
@@ -19,9 +29,17 @@ Schema compatibility: [18_SCHEMA_COMPATIBILITY.md](18_SCHEMA_COMPATIBILITY.md).
 - **S22:** `jsbench leaderboard` writes local-first `leaderboard.json` + `leaderboard.md` (`schemas/leaderboard.schema.json`); no upload; no winner rankings.
 - **S23:** Template `nextjs-app-tailwind` (Tailwind CSS v4 + PostCSS); pins in `resolved-versions.json`; tiny digest calibrated.
 - **S24:** Template `pnpm-workspace` (`kind: workspace`); multi-package `packages/pkg-NNN` with `workspace:*` edges; pin resolver walks nested manifests.
+- **S25:** Optional `docker-stats` collector (`containerCpuPercentAvg|Max`, `containerMemBytesAvg`, `containerMemMaxBytes`); interval ≥ 200ms; skips on native.
+- **S26:** Official built-in profiles for `nextjs-app`, `nextjs-app-tailwind`, and `pnpm-workspace` in smoke / benchmark / benchmark-slow tiers; report profile-tier labels; catalog in `profiles/README.md`.
+- Release candidate checklist and hardware validation plan (`docs/19_*`, `docs/20_*`).
+
+### Fixed
+
+- `node-ts-lib` / `fixture-lib` skeletons re-export generated modules with `export *` (was invalid `export { default as generated }` from a barrel with no default), so `install-build-matrix` `tsc` build succeeds; recalibrated `node-ts-lib@tiny@1` digest.
 
 ### Changed
 
+- **Release polish:** first-time Linux onboarding (Node ≥20, rootless Corepack/pnpm PATH); `doctor` human summary with required vs optional checks and actionable fixes (Node major gate); `list-profiles` human table + `list` alias; `--json` for doctor/list; clone-local CLI form `pnpm jsbench …` in help, docs, and replay hints; stage-failure log tails in warnings.
 - Architecture exit-code table documents code 7 (regression gate).
 - Version policy §6 documents `replay` instead of “may later add”.
 - Metrics §9 documents opt-in IQR (no longer “optional later”).
@@ -29,6 +47,13 @@ Schema compatibility: [18_SCHEMA_COMPATIBILITY.md](18_SCHEMA_COMPATIBILITY.md).
 - Generator template table marks `nextjs-app-tailwind` and `pnpm-workspace` done (T-M5-07 complete).
 - Application renderer home title uses `jsbench-<templateId>` (post-S23 quality gate; `nextjs-app` digest unchanged).
 - Post-S24 quality gate: workspace renderer rejects `packageCount < 1`.
+- Metrics/Docker docs mark `docker-stats` implemented (S25).
+- Markdown/HTML reports include `Profile tier` derived from profile id.
+
+### Notes
+
+- Schema compatibility window remains the **1.x / schemaVersion 1** promise from [18_SCHEMA_COMPATIBILITY.md](18_SCHEMA_COMPATIBILITY.md).
+- npm publish and git tag `v1.1.0-rc.1` are **maintainer actions** (not performed by this preparation step).
 
 ---
 

@@ -1,8 +1,8 @@
 schemaVersion: 1
 id: native-smoke
 description: >
-  M1 native smoke profile. Copies fixtures/native-smoke into the run workspace
-  and runs a trivial Node script (no package-manager install).
+  [smoke] Fast official native smoke profile. Copies fixtures/native-smoke into the run
+  workspace and runs a trivial Node script (no package-manager install). Default CI path.
 workload:
   template: fixtures/native-smoke
   size: tiny

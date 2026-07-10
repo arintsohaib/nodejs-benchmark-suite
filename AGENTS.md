@@ -69,7 +69,7 @@ Specs under `docs/` are authoritative for product behavior. Implementation must 
 - Do not register CLI commands that crash because their stack is unfinished—omit them or return a clear not-implemented error (see implementation plan standing rules).
 - Track status in [docs/13_TASKS.md](docs/13_TASKS.md); record decisions in that file’s Decisions Log.
 
-**Current position (check TASKS/README if stale):** **S24** complete (`pnpm-workspace`). Suite **`1.0.0`**. Further work from parking lot / post-1.0 themes (new slices as approved).
+**Current position (check TASKS/README if stale):** **`1.1.0-rc.1` prepared** (S19–S26 + release polish). Previous stable: **`1.0.0`**. Next: hardware validation → final `1.1.0` (no feature milestones until RC approved).
 
 ---
 

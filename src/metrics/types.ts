@@ -21,6 +21,10 @@ export interface StageContext {
   readonly iteration: number;
   readonly iterationKind: "warmup" | "measured";
   readonly workspacePath: string;
+  /** Present for Docker stages so collectors can target the container. */
+  readonly docker?: {
+    readonly containerName: string;
+  };
 }
 
 export interface Collector {

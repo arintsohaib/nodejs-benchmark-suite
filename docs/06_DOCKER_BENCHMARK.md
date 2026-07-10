@@ -1,6 +1,6 @@
 # Docker Benchmark Architecture
 
-**Status:** Partial — CLI runner + bind/named-volume (S13); Compose later  
+**Status:** Partial — CLI runner + bind/named-volume (S13); docker-stats collector (S25); Compose later  
 **Last updated:** July 2026
 
 ---
@@ -151,6 +151,6 @@ For publishable native↔Docker comparisons:
 - [x] Mount planner (`bind` + `named-volume`) (S13)
 - [x] `docker exec` timing wrapper (S13)
 - [x] Host mount allowlist under `workspaceRoot` (S16)
-- [ ] Stats sampling (`docker stats` / cgroup) optional collector
+- [x] Stats sampling (`docker stats` / cgroup) optional collector — **done (S25 `docker-stats`)**
 - [x] Smoke profile `docker-smoke` (S13)
 - [ ] Compose multi-service fixtures (later)

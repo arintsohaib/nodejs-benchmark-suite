@@ -1,0 +1,39 @@
+schemaVersion: 1
+id: nextjs-app-tailwind-benchmark
+description: >
+  [benchmark] Standard official profile for template nextjs-app-tailwind (tiny). Cold
+  install, typecheck, and next build (Tailwind/PostCSS) across npm and pnpm. Network
+  required for install. Not run in default CI; use for publishable local/lab comparisons.
+workload:
+  template: nextjs-app-tailwind
+  size: tiny
+  seed: 1
+matrix:
+  packageManager: [npm, pnpm]
+stages:
+  - id: install
+    action: packageManager.install
+    cache: cold
+    network: true
+    timeoutMs: 300000
+  - id: typecheck
+    action: project.typecheck
+    cache: warm
+    timeoutMs: 180000
+  - id: build
+    action: project.build
+    cache: warm
+    timeoutMs: 600000
+iterations:
+  warmup: 0
+  measured: 1
+runner:
+  type: native
+metrics:
+  collectors:
+    - wall
+reporting:
+  formats:
+    - json
+    - markdown
+    - html

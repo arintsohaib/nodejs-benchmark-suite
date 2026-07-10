@@ -13,10 +13,14 @@ describe("listProfiles", () => {
     assert.ok(ids.includes("native-smoke"));
     assert.ok(ids.includes("install-build-matrix"));
     assert.ok(ids.includes("docker-smoke"));
+    assert.ok(ids.includes("nextjs-app-smoke"));
+    assert.ok(ids.includes("nextjs-app-tailwind-benchmark"));
+    assert.ok(ids.includes("pnpm-workspace-benchmark-slow"));
     assert.ok(ids.includes("foundation-sample"));
     for (const item of items) {
       assert.match(item.digest, /^[a-f0-9]{64}$/);
       assert.ok(item.path.length > 0);
+      assert.ok(["smoke", "benchmark", "benchmark-slow", "custom"].includes(item.tier));
     }
   });
 });

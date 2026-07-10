@@ -1,7 +1,7 @@
 # Project Overview
 
 **Project:** Node.js Benchmark Suite  
-**Status:** S24 complete (`pnpm-workspace`); suite `1.0.0`
+**Status:** `1.1.0-rc.1` (S19–S26 + release polish); prior stable `1.0.0`
 **Document type:** Source of truth  
 **Last updated:** July 2026
 
@@ -136,4 +136,4 @@ Everything under `docs/` is the **permanent specification** until implementation
 
 ## Current Phase
 
-**M0–M6 are complete** (suite `1.0.0`). Post-1.0 themes: [12_ROADMAP.md](12_ROADMAP.md) §3 · parking lot in [13_TASKS.md](13_TASKS.md).
+**M0–M6 are complete** (suite `1.0.0`). Current line: **`1.1.0-rc.1`**. Post-1.0 themes: [12_ROADMAP.md](12_ROADMAP.md) §3 · parking lot in [13_TASKS.md](13_TASKS.md) · RC: [19_RELEASE_CANDIDATE_CHECKLIST.md](19_RELEASE_CANDIDATE_CHECKLIST.md).

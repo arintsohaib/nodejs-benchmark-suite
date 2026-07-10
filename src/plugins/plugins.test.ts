@@ -21,7 +21,7 @@ const CTX: StageContext = {
 describe("plugin registry", () => {
   it("lists built-in collectors", async () => {
     const registry = await createPluginRegistry({});
-    assert.deepEqual(registry.listCollectorIds(), ["disk-usage", "rusage", "wall"]);
+    assert.deepEqual(registry.listCollectorIds(), ["disk-usage", "docker-stats", "rusage", "wall"]);
   });
 
   it("loads a sample reporter plugin from disk", async () => {

@@ -4,10 +4,64 @@ Open-source **engineering benchmark platform** for measuring modern JavaScript *
 
 Compare developer-loop cost across hardware, storage, operating systems, Docker setups, package managers, and project sizes—on **native Linux** and in **Docker**.
 
-**Status:** M0–**M6 complete** (`1.0.0`); **S19–S24** post-1.0 done  
-**Suite version:** `1.0.0` (tag: `v1.0.0`)
+**Status:** **`1.1.0-rc.1`** release candidate (M0–M6 + S19–S26 + release polish)  
+**Suite version:** `1.1.0-rc.1` (previous stable tag: `v1.0.0`)  
+**RC docs:** [19_RELEASE_CANDIDATE_CHECKLIST.md](docs/19_RELEASE_CANDIDATE_CHECKLIST.md) · [20_HARDWARE_VALIDATION_PLAN.md](docs/20_HARDWARE_VALIDATION_PLAN.md)
 
 **AI agents:** follow [AGENTS.md](AGENTS.md) (required reading and milestone workflow).
+
+---
+
+## First-time setup (Linux)
+
+**Requirements**
+
+| Tool | Required? | Notes |
+|------|-----------|--------|
+| **Node.js ≥ 20** | Yes | Active LTS recommended. System Node 18 will fail `doctor`. |
+| **pnpm** (via Corepack) | Yes for this repo + most profiles | Must be on your `PATH` |
+| **npm** | For npm matrix cells | Usually ships with Node |
+| **Yarn** | Optional | Only `*-benchmark-slow` Yarn cells |
+| **Docker** | Optional | Only Docker profiles (e.g. `docker-smoke`) |
+
+**Install pnpm without root** (recommended when `corepack enable` cannot write to `/usr/local/bin`):
+
+```bash
+mkdir -p "$HOME/.local/bin"
+corepack enable --install-directory "$HOME/.local/bin"
+export PATH="$HOME/.local/bin:$PATH"
+corepack prepare pnpm@10.12.4 --activate
+# Add the export to ~/.bashrc (or equivalent) so new shells keep pnpm on PATH.
+```
+
+**Clone and first run**
+
+```bash
+git clone <repo-url>
+cd nodejs-benchmark-suite
+pnpm install
+
+# Recommended CLI form from a clone (tsx; no build required):
+pnpm jsbench doctor
+pnpm jsbench list-profiles
+pnpm jsbench run --profile native-smoke
+
+# Equivalent after a production-like build:
+pnpm build
+node dist/cli.js doctor
+```
+
+`doctor` prints a human summary (required vs optional, with fixes). Use `pnpm jsbench doctor --json` for scripts.
+
+**How to invoke the CLI**
+
+| Form | When |
+|------|------|
+| `pnpm jsbench <command>` | **Preferred** from a git clone |
+| `node dist/cli.js <command>` | After `pnpm build` |
+| bare `jsbench` | Only if you installed/linked the package globally |
+
+Docs and replay hints use `pnpm jsbench …`.
 
 ---
 
@@ -21,7 +75,7 @@ Compare developer-loop cost across hardware, storage, operating systems, Docker 
 | Environments | Native Linux, Docker (bind mounts, named volumes, limits) |
 | Scales | Deterministic small → large synthetic projects |
 
-This is **not** a web application, demo, or HTTP load tester. It is a CLI laboratory that emits machine-readable and human-readable reports.
+This is **not** a web application, demo, or HTTP load tester. It is a CLI engineering tool that emits machine-readable and human-readable reports.
 
 ---
 
@@ -29,40 +83,40 @@ This is **not** a web application, demo, or HTTP load tester. It is a CLI labora
 
 | Command | Status |
 |---------|--------|
-| `jsbench version` | Available |
-| `jsbench help` | Available |
-| `jsbench doctor` | Available |
-| `jsbench validate-profile <path\|id>` | Available |
-| `jsbench run --profile <path\|id> --dry-run` | Available |
-| `jsbench run --profile <path\|id>` | Available (native + Docker) |
-| `jsbench generate --template <id>` | Available (`fixture-lib`, `node-ts-lib`, `nextjs-app`, `nextjs-app-tailwind`, `pnpm-workspace`) |
-| `jsbench list-profiles` | Available |
-| `report` | Re-render Markdown/HTML from a run directory |
-| `report diff` | Compare two runs → `diff.md` + `diff.json`; optional `--fail-on-regression` (exit 7) |
-| `replay` | Reproduction hints from `run.json`; optional `--execute` |
-| `leaderboard` | Local-first index of runs → `leaderboard.json` + `.md` (no upload) |
+| `version` / `help` | Available |
+| `doctor` | Available (human summary; `--json` optional) |
+| `validate-profile <path\|id>` | Available |
+| `list-profiles` (alias: `list`) | Available (table; `--json` optional) |
+| `run --profile <path\|id> [--dry-run]` | Available (native + Docker) |
+| `generate --template <id>` | Available (`fixture-lib`, `node-ts-lib`, `nextjs-app`, `nextjs-app-tailwind`, `pnpm-workspace`) |
+| `report` / `report diff` | Available; optional `--fail-on-regression` (exit 7) |
+| `replay` | Available; optional `--execute` |
+| `leaderboard` | Local-first index (no upload) |
 
 Also available as a library via package exports: config, profiles, metrics, native runner, reporting, `executeRun` / `runCli`.
+
+### Official profile tiers
+
+Built-in profiles are tagged **smoke** (fast), **benchmark** (standard), or **benchmark-slow** (optional lab). Full catalog: [profiles/README.md](profiles/README.md).
+
+```bash
+pnpm jsbench list-profiles
+pnpm jsbench run --profile nextjs-app-smoke --dry-run
+pnpm jsbench run --profile nextjs-app-benchmark          # local/lab; network + next build
+pnpm jsbench run --profile pnpm-workspace-benchmark-slow # optional slow
+```
+
+Reports include `Profile` id/digest and `Profile tier` so citations stay unambiguous.
 
 ---
 
 ## M1 usage (native smoke)
 
-Requires **Node.js ≥ 20** and **pnpm** (see `packageManager` in `package.json`).
-
 ```bash
-corepack enable
-pnpm install
-pnpm lint && pnpm typecheck && pnpm test && pnpm build
-
-# Prerequisites
-node dist/cli.js doctor
-
-# Official smoke profile (id resolves under ./profiles)
-node dist/cli.js validate-profile native-smoke
-node dist/cli.js run --profile native-smoke
-
-# Reports land under ./reports/<run-id>/ (run.json + summary.md + index.html)
+pnpm jsbench doctor
+pnpm jsbench validate-profile native-smoke
+pnpm jsbench run --profile native-smoke
+# Reports: ./reports/<run-id>/ (run.json + summary.md + index.html)
 ```
 
 What `native-smoke` does:
@@ -81,12 +135,12 @@ Profile ids (e.g. `native-smoke`) and file paths both work for `--profile` / `va
 Requires **npm** and **pnpm** on `PATH` for the built-in matrix (Yarn supported via adapters when selected).
 
 ```bash
-node dist/cli.js list-profiles
-node dist/cli.js validate-profile install-build-matrix
-node dist/cli.js run --profile install-build-matrix --dry-run
+pnpm jsbench list-profiles
+pnpm jsbench validate-profile install-build-matrix
+pnpm jsbench run --profile install-build-matrix --dry-run
 
 # Full run (network install + tsc build × npm/pnpm) — not in default CI
-node dist/cli.js run --profile install-build-matrix
+pnpm jsbench run --profile install-build-matrix
 ```
 
 Optional slow tests (same path, gated):
@@ -97,16 +151,16 @@ JSBENCH_SLOW_TESTS=1 pnpm test:slow
 
 ```bash
 # Generate a TypeScript library workspace
-node dist/cli.js generate --template node-ts-lib --size tiny --seed 1
+pnpm jsbench generate --template node-ts-lib --size tiny --seed 1
 
 # Generate a Next.js App Router workspace (materialize only — no next build in default CI)
-node dist/cli.js generate --template nextjs-app --size tiny --seed 1
+pnpm jsbench generate --template nextjs-app --size tiny --seed 1
 
 # Next.js + Tailwind CSS v4 (PostCSS)
-node dist/cli.js generate --template nextjs-app-tailwind --size tiny --seed 1
+pnpm jsbench generate --template nextjs-app-tailwind --size tiny --seed 1
 
 # pnpm multi-package workspace
-node dist/cli.js generate --template pnpm-workspace --size tiny --seed 1
+pnpm jsbench generate --template pnpm-workspace --size tiny --seed 1
 ```
 
 ---
@@ -116,10 +170,10 @@ node dist/cli.js generate --template pnpm-workspace --size tiny --seed 1
 Requires a running **Docker Engine** and `docker` on `PATH`.
 
 ```bash
-node dist/cli.js doctor
-node dist/cli.js validate-profile docker-smoke
-node dist/cli.js run --profile docker-smoke --dry-run
-node dist/cli.js run --profile docker-smoke
+pnpm jsbench doctor
+pnpm jsbench validate-profile docker-smoke
+pnpm jsbench run --profile docker-smoke --dry-run
+pnpm jsbench run --profile docker-smoke
 ```
 
 Compare with `native-smoke` (same fixture) using the checklist in [docs/06_DOCKER_BENCHMARK.md](docs/06_DOCKER_BENCHMARK.md) §14. Optional CI: workflow_dispatch with `docker_smoke: true`.
@@ -130,13 +184,13 @@ Compare with `native-smoke` (same fixture) using the checklist in [docs/06_DOCKE
 
 ```bash
 # Re-render summary.md + index.html from an existing run (does not mutate run.json)
-node dist/cli.js report ./reports/<run-id>
+pnpm jsbench report ./reports/<run-id>
 
 # Diff two runs
-node dist/cli.js report diff ./reports/<runA> ./reports/<runB> --out ./diff-out
+pnpm jsbench report diff ./reports/<runA> ./reports/<runB> --out ./diff-out
 
 # CI regression gate (exit 7 on threshold breach)
-node dist/cli.js report diff ./baseline ./reports/<run-id> \
+pnpm jsbench report diff ./baseline ./reports/<run-id> \
   --metric durationMs \
   --fail-on-regression \
   --max-percent-increase 10 \
@@ -148,18 +202,18 @@ node dist/cli.js report diff ./baseline ./reports/<run-id> \
 
 ```bash
 # Print toolchain exact: hints + suggested commands (stdout JSON)
-node dist/cli.js replay ./reports/<run-id>
-# or: node dist/cli.js replay --from ./reports/<run-id>/run.json
+pnpm jsbench replay ./reports/<run-id>
+# or: pnpm jsbench replay --from ./reports/<run-id>/run.json
 
 # Re-execute when the local profile digest still matches
-node dist/cli.js replay ./reports/<run-id> --execute
+pnpm jsbench replay ./reports/<run-id> --execute
 ```
 
 ### Local leaderboard index
 
 ```bash
 # Index all run.json under ./reports into ./leaderboard (no upload)
-node dist/cli.js leaderboard --from ./reports --out ./leaderboard
+pnpm jsbench leaderboard --from ./reports --out ./leaderboard
 ```
 
 Enable optional collectors in a profile (`rusage`, `disk-usage`) and/or load plugins from config:
@@ -199,9 +253,9 @@ Schema compatibility draft: [docs/18_SCHEMA_COMPATIBILITY.md](docs/18_SCHEMA_COM
 Dry-run any profile without executing stages:
 
 ```bash
-node dist/cli.js run --profile native-smoke --dry-run
-node dist/cli.js run --profile install-build-matrix --dry-run
-node dist/cli.js run --profile docker-smoke --dry-run
+pnpm jsbench run --profile native-smoke --dry-run
+pnpm jsbench run --profile install-build-matrix --dry-run
+pnpm jsbench run --profile docker-smoke --dry-run
 ```
 
 ---
@@ -268,7 +322,10 @@ Full architecture: [docs/03_ARCHITECTURE.md](docs/03_ARCHITECTURE.md)
 | [15 FAQ](docs/15_FAQ.md) | Common questions |
 | [16 Contributing](docs/16_CONTRIBUTING.md) | How to contribute |
 | [17 Implementation plan](docs/17_IMPLEMENTATION_PLAN.md) | Commit-sized slices S0–S18 |
-| [18 Schema compatibility](docs/18_SCHEMA_COMPATIBILITY.md) | v1 contract draft (pre-1.0) |
+| [18 Schema compatibility](docs/18_SCHEMA_COMPATIBILITY.md) | v1 contract (1.x window) |
+| [19 RC checklist](docs/19_RELEASE_CANDIDATE_CHECKLIST.md) | `1.1.0-rc.1` release checklist |
+| [20 Hardware validation](docs/20_HARDWARE_VALIDATION_PLAN.md) | Pre-final hardware test plan |
+| [Release notes 1.1.0-rc.1](docs/RELEASE_NOTES_1.1.0-rc.1.md) | Short RC announcement |
 
 ---
 
@@ -305,7 +362,7 @@ nodejs-benchmark-suite/
 | **M4 (S14)** | HTML reports + run diffs — **done** |
 | **M5 (S15–S16)** | Plugins + collectors + hardening — **done** |
 | **M6 (S17–S18)** | Calibration + release `1.0.0` — **done** |
-| **Post-1.0 (S19–S24)** | Regression gates, `replay`, IQR, leaderboard, Tailwind + pnpm-workspace templates — **done** |
+| **Post-1.0 (S19–S26)** | Gates, replay, IQR, leaderboard, templates, docker-stats, official template profiles — **done** |
 
 Details: [docs/12_ROADMAP.md](docs/12_ROADMAP.md) · Tasks: [docs/13_TASKS.md](docs/13_TASKS.md) · Slices: [docs/17_IMPLEMENTATION_PLAN.md](docs/17_IMPLEMENTATION_PLAN.md)
 

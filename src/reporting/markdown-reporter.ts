@@ -1,5 +1,12 @@
 import type { MetricAggregate } from "../metrics/types.js";
-import { formatBytes, formatNumber, renderCitationBlock, truncateText } from "./format.js";
+import {
+  formatBytes,
+  formatNumber,
+  formatProfileTierLabel,
+  inferProfileTier,
+  renderCitationBlock,
+  truncateText,
+} from "./format.js";
 import type { Reporter, RunArtifact, StageResult } from "./types.js";
 
 function groupDurationAggregates(
@@ -85,6 +92,7 @@ export function renderMarkdownSummary(artifact: RunArtifact): string {
     `- Suite: ${artifact.suiteVersion}`,
     `- Status: ${artifact.status}`,
     `- Profile: \`${artifact.profile.id}\` (digest \`${artifact.profile.digest}\`)`,
+    `- Profile tier: ${formatProfileTierLabel(inferProfileTier(artifact.profile.id))}`,
     `- Profile path: \`${artifact.profile.path}\``,
     `- Runner mode: ${artifact.environment.mode}`,
     `- Iterations: warmup ${artifact.plan.warmup}, measured ${artifact.plan.measured}`,

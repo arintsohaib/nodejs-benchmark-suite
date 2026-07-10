@@ -1,7 +1,7 @@
 # Contributing
 
 **Last updated:** July 2026  
-**Status:** S24 complete — suite `1.0.0`. New work: parking lot or post-1.0 roadmap themes.
+**Status:** `1.1.0-rc.1` prepared; final `1.1.0` after hardware validation  
 
 Thank you for helping build a trustworthy JS development benchmark platform.
 
@@ -40,14 +40,19 @@ Be respectful and assume good faith. Harassment or personal attacks are not tole
 
 ## 4. Development Setup
 
+**Node.js ≥ 20** is required. Put **pnpm** on your `PATH` (see README “First-time setup (Linux)” for a rootless Corepack recipe).
+
 ```bash
 git clone <repo-url>
 cd nodejs-benchmark-suite
-corepack enable
 pnpm install
 pnpm lint && pnpm typecheck && pnpm test && pnpm build
 pnpm jsbench doctor
+pnpm jsbench list-profiles
+pnpm jsbench run --profile native-smoke
 ```
+
+Invoke the CLI as **`pnpm jsbench <command>`** from a clone (or `node dist/cli.js <command>` after `pnpm build`). Do not assume a global `jsbench` binary.
 
 Optional network matrix (not in default CI):
 
@@ -79,7 +84,7 @@ pnpm jsbench run --profile docker-smoke
 ## 6. Adding a Profile (from M2)
 
 1. Create YAML under `profiles/`.
-2. Validate with `jsbench validate-profile`.
+2. Validate with `pnpm jsbench validate-profile <id>`.
 3. Document intent in profile `description`.
 4. Prefer pinned fixture deps for built-in profiles.
 5. Include expected stages and matrix axes explicitly.
@@ -116,13 +121,14 @@ export default {
 };
 ```
 
-Built-in collector ids: `wall` (always timed by the process/docker runner), `rusage`, `disk-usage`. Enable via profile:
+Built-in collector ids: `wall` (always timed by the process/docker runner), `rusage`, `disk-usage`, `docker-stats`. Enable via profile:
 
 ```yaml
 metrics:
-  collectors: [wall, rusage, disk-usage]
+  collectors: [wall, rusage, disk-usage, docker-stats]
 ```
 
+`docker-stats` only emits samples on Docker stages (needs container context); native runs skip it.
 See the sample at [`examples/plugins/sample-note-reporter.mjs`](../examples/plugins/sample-note-reporter.mjs) and [03_ARCHITECTURE.md](03_ARCHITECTURE.md) §9.
 
 ---

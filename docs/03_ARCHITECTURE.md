@@ -1,6 +1,6 @@
 # Architecture
 
-**Status:** Active — M6 / `1.0.0` shipped; post-1.0 extensions follow roadmap backlog  
+**Status:** Active — M6 / `1.0.0` shipped; `1.1.0-rc.1` adds post-1.0 CLI/reporting/templates without schema breaks  
 **Last updated:** July 2026
 
 ---
@@ -286,16 +286,18 @@ For single-runner profiles (e.g. M1 smoke), omit the `runner` matrix axis and se
 
 | Command | Behavior |
 |---------|----------|
-| `jsbench doctor` | Check Node, package managers, Docker, disk, permissions |
-| `jsbench list-profiles` | List built-in and discovered profiles |
+| `jsbench doctor` | Check Node (≥20), package managers, Docker; human summary + `--json` |
+| `jsbench list-profiles` | List built-in profiles (alias `list`; table or `--json`) |
 | `jsbench validate-profile <path>` | Schema + semantic validation |
-| `jsbench generate --profile <id>` | Materialize workloads only |
+| `jsbench generate --template <id>` | Materialize workloads only |
 | `jsbench run --profile <id>` | Full plan execution |
 | `jsbench report <run-id>` | Re-render reports from raw JSON |
 | `jsbench report diff <a> <b>` | Compare aggregates; optional `--fail-on-regression` gate (exit 7) |
 | `jsbench replay <run>` | Reproduction hints from `run.json`; `--execute` re-runs matching profile |
 | `jsbench leaderboard` | Local-first index of runs → `leaderboard.json` + `.md` (no upload / no crowning) |
 | `jsbench version` | Suite version + optional dependency banner |
+
+From a git clone, invoke as `pnpm jsbench <command>` (or `node dist/cli.js <command>` after `pnpm build`).
 
 Implementation note: use a typed CLI framework consistent with [11_DEPENDENCY_POLICY.md](11_DEPENDENCY_POLICY.md).
 
@@ -307,7 +309,7 @@ Implementation note: use a typed CLI framework consistent with [11_DEPENDENCY_PO
 
 - Register `Collector` / `Reporter` implementations via `plugins: [path, …]` in suite config.
 - Plugins are local TypeScript/JavaScript ESM modules resolved from path (`default` or `plugin` export).
-- Built-in collectors: `wall`, `rusage`, `disk-usage`. Built-in Markdown/HTML reporters remain core; plugins add extras.
+- Built-in collectors: `wall`, `rusage`, `disk-usage`, `docker-stats`. Built-in Markdown/HTML reporters remain core; plugins add extras.
 - Profile `metrics.collectors` selects which collectors run (wall is always ensured).
 
 ### Later

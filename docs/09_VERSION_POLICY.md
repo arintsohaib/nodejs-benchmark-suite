@@ -1,6 +1,6 @@
 # Version Policy
 
-**Status:** Active — pins calibrated for suite `1.0.0`  
+**Status:** Active — pins calibrated for suite `1.0.0`; suite line `1.1.0-rc.1` (additive)  
 **Last updated:** July 2026
 
 ---

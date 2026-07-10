@@ -2,8 +2,9 @@
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
-import { runDoctor } from "./cli/doctor.js";
-import { listProfiles } from "./cli/list-profiles.js";
+import { formatDoctorHuman, runDoctor } from "./cli/doctor.js";
+import { cliCommand, cliInvocationHelpLines } from "./cli/invocation.js";
+import { formatProfileListHuman, listProfiles } from "./cli/list-profiles.js";
 import { cmdLeaderboard } from "./commands/leaderboard.js";
 import { cmdReplay } from "./commands/replay.js";
 import {
@@ -26,19 +27,32 @@ import { loadProfile } from "./profiles/load-profile.js";
 import { resolveProfileRef } from "./profiles/resolve-profile-ref.js";
 import { SUITE_VERSION } from "./version.js";
 
+const KNOWN_COMMANDS = [
+  "version",
+  "help",
+  "doctor",
+  "validate-profile",
+  "list-profiles",
+  "list",
+  "run",
+  "generate",
+  "report",
+  "replay",
+  "leaderboard",
+] as const;
+
 function printHelp(): void {
   const lines = [
     "jsbench — Node.js development benchmark suite",
     "",
-    "Usage:",
-    "  jsbench <command> [options]",
+    ...cliInvocationHelpLines(),
     "",
     "Commands:",
     "  version                 Print suite version",
     "  help                    Show this help",
     "  doctor                  Check host prerequisites (Node, PMs, Docker)",
     "  validate-profile <ref>  Load and validate a profile (path or id)",
-    "  list-profiles           List profiles under profilesDir",
+    "  list-profiles           List profiles under profilesDir (alias: list)",
     "  run --profile <ref> [--dry-run] [--continue-on-error]",
     "                          Plan and optionally execute a native run",
     "  generate --template <id> [--size] [--seed] [--out]",
@@ -52,6 +66,7 @@ function printHelp(): void {
     "Global options:",
     "  --config <path>         Path to jsbench.config.yaml",
     "  --log-level <level>     debug|info|warn|error|silent",
+    "  --json                  Machine-readable JSON on stdout (doctor, list-profiles)",
     "  --help                  Show help",
     "",
     "Run options:",
@@ -87,6 +102,15 @@ function printHelp(): void {
     "  --metric <name>         Median metric to index (default: durationMs)",
   ];
   process.stdout.write(`${lines.join("\n")}\n`);
+}
+
+function suggestCommand(unknown: string): string | undefined {
+  if (unknown === "list") {
+    return "list-profiles";
+  }
+  const lowered = unknown.toLowerCase();
+  const hit = KNOWN_COMMANDS.find((c) => c.startsWith(lowered) || lowered.startsWith(c));
+  return hit;
 }
 
 async function cmdValidateProfile(
@@ -257,6 +281,7 @@ async function main(argv: readonly string[]): Promise<number> {
       from: { type: "string" },
       execute: { type: "boolean", default: false },
       force: { type: "boolean", default: false },
+      json: { type: "boolean", default: false },
     },
     allowPositionals: true,
     strict: true,
@@ -320,13 +345,20 @@ async function main(argv: readonly string[]): Promise<number> {
     }
     case "doctor": {
       const result = await runDoctor({ logger, strictDoctor: config.strictDoctor });
-      process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+      if (values.json === true) {
+        process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+      } else {
+        process.stdout.write(formatDoctorHuman(result));
+      }
       return result.exitCode;
     }
     case "run": {
       const profileRef = values.profile ?? positionals[1];
       if (profileRef === undefined) {
-        throw new BenchError("INVALID_CONFIG", "run requires --profile <path|id>");
+        throw new BenchError(
+          "INVALID_CONFIG",
+          `run requires --profile <path|id> (example: ${cliCommand("run --profile native-smoke")})`,
+        );
       }
       if (values["dry-run"] === true) {
         await cmdRunDry(profileRef, config, logger);
@@ -355,9 +387,14 @@ async function main(argv: readonly string[]): Promise<number> {
         logger,
       );
     }
+    case "list":
     case "list-profiles": {
       const items = await listProfiles(config.profilesDir);
-      process.stdout.write(`${JSON.stringify({ profiles: items }, null, 2)}\n`);
+      if (values.json === true) {
+        process.stdout.write(`${JSON.stringify({ profiles: items }, null, 2)}\n`);
+      } else {
+        process.stdout.write(formatProfileListHuman(items));
+      }
       return ExitCode.Success;
     }
     case "report": {
@@ -396,7 +433,7 @@ async function main(argv: readonly string[]): Promise<number> {
       if (runPath === undefined) {
         throw new BenchError(
           "INVALID_CONFIG",
-          "Usage: jsbench replay <runDir|run.json> | jsbench replay --from <path>",
+          `Usage: ${cliCommand("replay <runDir|run.json>")} | ${cliCommand("replay --from <path>")}`,
         );
       }
       return await cmdReplay(
@@ -422,8 +459,17 @@ async function main(argv: readonly string[]): Promise<number> {
         logger,
       );
     }
-    default:
-      throw new BenchError("INVALID_CONFIG", `Unknown command: ${command}`, { command });
+    default: {
+      const suggestion = suggestCommand(command);
+      const hint =
+        suggestion !== undefined
+          ? ` Did you mean \`${suggestion}\`? Try: ${cliCommand(suggestion)}`
+          : ` Try: ${cliCommand("help")}`;
+      throw new BenchError("INVALID_CONFIG", `Unknown command: ${command}.${hint}`, {
+        command,
+        ...(suggestion !== undefined ? { suggestion } : {}),
+      });
+    }
   }
 }
 

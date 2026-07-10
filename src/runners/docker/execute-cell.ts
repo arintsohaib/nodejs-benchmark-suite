@@ -92,6 +92,7 @@ async function runDockerStageIteration(options: {
     iteration: options.iteration,
     iterationKind: options.iterationKind,
     workspacePath: options.workspacePath,
+    docker: { containerName: options.session.containerName },
   };
 
   const { result: processResult, samples } = await runWithOptionalCollectors({
@@ -278,10 +279,16 @@ export async function executeDockerCell(options: {
           cellFailed = true;
           const message = `Stage ${stage.id} failed (cell ${options.cell.cellId}, ${iter.kind} #${iter.index})`;
           warnings.push(message);
+          const { readLogTail } = await import("../../cli/read-log-tail.js");
+          const stdoutTail = await readLogTail(result.artifacts?.stdout);
+          const stderrTail = await readLogTail(result.artifacts?.stderr);
           options.logger.warn(message, {
             durationMs: result.durationMs,
             stdout: result.artifacts?.stdout,
             stderr: result.artifacts?.stderr,
+            ...(stdoutTail !== undefined ? { stdoutTail } : {}),
+            ...(stderrTail !== undefined ? { stderrTail } : {}),
+            hint: "Open the stdout/stderr log paths above; tails are included when non-empty.",
           });
           if (!options.continueOnError) {
             abortRemaining = true;

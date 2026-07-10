@@ -1,4 +1,4 @@
-export { default as generated } from "./generated/index.js";
+export * from "./generated/index.js";
 export { add } from "./lib/util.js";
 
 export function hello(): string {

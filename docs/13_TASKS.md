@@ -1,6 +1,6 @@
 # Task Tracking
 
-**Status:** S24 complete (`pnpm-workspace`); suite `1.0.0` — further post-1.0 via parking lot  
+**Status:** `1.1.0-rc.1` prepared (S19–S26 + release polish); final `1.1.0` pending hardware validation  
 **Last updated:** July 2026  
 **How to use:** Move items across status sections; reference task ids in commits/PRs.  
 **Engineering sequence:** Prefer slices **S1–S18** in [17_IMPLEMENTATION_PLAN.md](17_IMPLEMENTATION_PLAN.md) for commit boundaries.  
@@ -144,6 +144,10 @@
 | T-POST-02 | `replay` from historical `run.json` | done (S20) |
 | T-POST-03 | Opt-in statistical outlier rules (`outlierRule: iqr`) | done (S21) |
 | T-POST-04 | Optional local-first leaderboard result directory | done (S22) |
+| T-POST-05 | `docker-stats` optional collector | done (S25) |
+| T-POST-06 | Official profiles for Next / Tailwind / pnpm-workspace | done (S26) |
+| T-POST-07 | Release polish: onboarding, doctor UX, CLI invocation consistency | done |
+| T-POST-08 | Prepare `1.1.0-rc.1` (version, changelog, RC checklist, hardware plan) | done |
 
 ---
 
@@ -184,6 +188,10 @@ Record architecture choices here as they are made during implementation:
 | 2026-07-11 | Post-S23 gate: home h1 = `jsbench-<templateId>` in application renderer | Fixes Tailwind label mismatch without changing `nextjs-app` digest |
 | 2026-07-11 | S24: `pnpm-workspace` (`kind: workspace`); pin walk for packages/*; complete T-M5-07 | Multi-package install/build realism on Linux |
 | 2026-07-11 | Post-S24 gate: approve S24; reject `packageCount < 1` in workspace renderer | Quality gate after human approval |
+| 2026-07-11 | S25: `docker-stats` collector; StageContext.docker; interval ≥ 200ms; skip native | Methodology for container CPU/mem without failing stages |
+| 2026-07-11 | S26: official smoke/benchmark/benchmark-slow profiles for nextjs, tailwind, pnpm-workspace | Close template↔profile gap from readiness assessment |
+| 2026-07-11 | T-POST-07: release polish — doctor UX, `pnpm jsbench` invocation, Linux onboarding docs | First-time friction from real-world validation |
+| 2026-07-11 | T-POST-08: suite `1.1.0-rc.1`; RC checklist + hardware validation plan; no tag/publish in prep | Release candidate preparation |
 
 ---
 
@@ -192,14 +200,13 @@ Record architecture choices here as they are made during implementation:
 - Windows/macOS runners
 - Result *upload* (local leaderboard format done — S22)
 - Compose multi-service fixtures
-- Optional built-in profiles for `nextjs-app-tailwind` / `pnpm-workspace` matrices
-- `docker-stats` collector (metrics §5.4)
 
 ### Recorded risks / recommendations (post-1.0)
 
 | Item | Notes |
 |------|-------|
 | S22 leaderboard | Discovery depth capped; empty indexes valid; sharing is manual (no upload) |
-| S23 Tailwind | No profile yet; no `next build` in CI; refresh pins carefully and re-baseline digests |
-| S24 workspace | pnpm-oriented; no recursive install in default CI; `workspace:*` edges are sequential |
-| Next suggested | **`docker-stats` collector** (methodology), or optional profiles for new templates; Compose / OS runners lower priority |
+| S23–S24 templates | Covered by S26 official profiles; next build still not default CI |
+| S25 docker-stats | Best-effort; not on by default; short stages may yield few/zero samples |
+| S26 profiles | Benchmark/slow tiers need network + local lab time; dry-run in CI only |
+| Next suggested | Commit/gate S25+S26; CI hardening; Compose / OS runners later |

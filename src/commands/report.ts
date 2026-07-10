@@ -1,5 +1,6 @@
 import { stat } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
+import { cliCommand } from "../cli/invocation.js";
 import type { JsBenchConfig } from "../config/types.js";
 import { BenchError, ExitCode } from "../errors/bench-error.js";
 import type { Logger } from "../logging/logger.js";
@@ -147,7 +148,7 @@ export function parseReportArgs(positionals: readonly string[]): {
     if (leftPath === undefined || rightPath === undefined) {
       throw new BenchError(
         "INVALID_CONFIG",
-        "Usage: jsbench report diff <runA> <runB> [--out <dir>]",
+        `Usage: ${cliCommand("report diff <runA> <runB> [--out <dir]")}`,
       );
     }
     return { mode: "diff", leftPath, rightPath };
@@ -156,7 +157,7 @@ export function parseReportArgs(positionals: readonly string[]): {
   if (runPath === undefined) {
     throw new BenchError(
       "INVALID_CONFIG",
-      "Usage: jsbench report <runDir> | jsbench report diff <runA> <runB>",
+      `Usage: ${cliCommand("report <runDir>")} | ${cliCommand("report diff <runA> <runB>")}`,
     );
   }
   return { mode: "rerender", runPath };

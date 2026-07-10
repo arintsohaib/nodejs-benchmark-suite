@@ -52,7 +52,22 @@ Trust both in context. Use native for host capability; use Docker for containeri
 
 ### Which Node.js version do you require?
 
-See [09_VERSION_POLICY.md](09_VERSION_POLICY.md). Defaults prefer **Active LTS** resolved at development/release time—not a forever-hardcoded number in the docs.
+**Node.js ≥ 20** (Active LTS recommended). `pnpm jsbench doctor` fails if the running Node major is below 20. See also [09_VERSION_POLICY.md](09_VERSION_POLICY.md).
+
+### How do I install pnpm on Linux without root?
+
+```bash
+mkdir -p "$HOME/.local/bin"
+corepack enable --install-directory "$HOME/.local/bin"
+export PATH="$HOME/.local/bin:$PATH"
+corepack prepare pnpm@10.12.4 --activate
+```
+
+Persist the `PATH` export in your shell profile. Full walkthrough: README “First-time setup (Linux)”.
+
+### How should I invoke the CLI?
+
+From a clone: **`pnpm jsbench <command>`**. After `pnpm build`: `node dist/cli.js <command>` is equivalent. A bare `jsbench` command only works if you linked/installed the package globally.
 
 ### Will you support Windows and macOS?
 
@@ -60,7 +75,7 @@ Linux is primary for v1. Other OS support is post-1.0 roadmap material because f
 
 ### Do I need every package manager installed?
 
-Only those selected by the profile matrix. `doctor` tells you what is missing.
+Only those selected by the profile matrix. `pnpm jsbench doctor` lists **required** vs **optional** tools and prints actionable fixes for anything missing.
 
 ---
 

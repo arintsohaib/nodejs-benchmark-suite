@@ -1,3 +1,4 @@
+import { cliCommand } from "../cli/invocation.js";
 import type { EnvironmentFingerprint, RunArtifact } from "./types.js";
 
 export type ReplayToolchainHint = {
@@ -51,10 +52,10 @@ export function buildReplayPlan(artifact: RunArtifact): ReplayPlan {
 
   const profileRef = artifact.profile.id;
   const suggestedCommands = [
-    "jsbench doctor",
-    `jsbench validate-profile ${profileRef}`,
-    `jsbench run --profile ${profileRef}`,
-    "jsbench replay <this-run-dir> --execute",
+    cliCommand("doctor"),
+    cliCommand(`validate-profile ${profileRef}`),
+    cliCommand(`run --profile ${profileRef}`),
+    cliCommand("replay <this-run-dir> --execute"),
   ];
 
   const notes = [
@@ -62,6 +63,7 @@ export function buildReplayPlan(artifact: RunArtifact): ReplayPlan {
     `Confirm the local profile digest still matches \`${artifact.profile.digest}\` before comparing timings.`,
     "Install toolchains matching environment.toolchains (prefer exact: pins).",
     "Prefer the same OS major and similar CPU/storage class; expect variance otherwise.",
+    "From a clone, prefer `pnpm jsbench …` (or `node dist/cli.js …` after `pnpm build`).",
   ];
 
   if (artifact.environment.mode === "docker") {

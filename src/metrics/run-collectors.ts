@@ -8,6 +8,10 @@ const KNOWN_UNITS: Readonly<Record<string, MetricUnit>> = {
   workspaceBytesBefore: "bytes",
   workspaceBytesAfter: "bytes",
   workspaceBytesDelta: "bytes",
+  containerCpuPercentAvg: "percent",
+  containerCpuPercentMax: "percent",
+  containerMemBytesAvg: "bytes",
+  containerMemMaxBytes: "bytes",
 };
 
 /** Infer aggregate unit from a metric name (v1 known set). */

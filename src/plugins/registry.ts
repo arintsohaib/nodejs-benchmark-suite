@@ -1,5 +1,6 @@
 import { BenchError } from "../errors/bench-error.js";
 import { createDiskUsageCollector } from "../metrics/disk-usage-collector.js";
+import { createDockerStatsCollector } from "../metrics/docker-stats-collector.js";
 import { createRusageCollector } from "../metrics/rusage-collector.js";
 import type { Collector } from "../metrics/types.js";
 import { createWallCollector } from "../metrics/wall-collector.js";
@@ -30,7 +31,7 @@ function toReporterFactory(entry: Reporter | (() => Reporter)): ReporterFactory 
 
 /**
  * Build a registry of built-in + plugin collectors/reporters.
- * Built-ins: `wall`, `rusage`, `disk-usage`.
+ * Built-ins: `wall`, `rusage`, `disk-usage`, `docker-stats`.
  */
 export async function createPluginRegistry(options: {
   readonly pluginPaths?: readonly string[];
@@ -39,6 +40,7 @@ export async function createPluginRegistry(options: {
     ["wall", createWallCollector],
     ["rusage", createRusageCollector],
     ["disk-usage", createDiskUsageCollector],
+    ["docker-stats", createDockerStatsCollector],
   ]);
   const reporters = new Map<string, ReporterFactory>();
   const loaded: JsBenchPlugin[] = [];

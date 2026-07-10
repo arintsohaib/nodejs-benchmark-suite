@@ -1,5 +1,12 @@
 import type { MetricAggregate } from "../metrics/types.js";
-import { escapeHtml, formatBytes, formatNumber, truncateText } from "./format.js";
+import {
+  escapeHtml,
+  formatBytes,
+  formatNumber,
+  formatProfileTierLabel,
+  inferProfileTier,
+  truncateText,
+} from "./format.js";
 import type { Reporter, RunArtifact, StageResult } from "./types.js";
 
 function groupDurationAggregates(
@@ -102,7 +109,7 @@ ${failed
 <ul>
 <li>Suite version: <code>${escapeHtml(artifact.suiteVersion)}</code></li>
 <li>Run id: <code>${escapeHtml(artifact.runId)}</code></li>
-<li>Profile: <code>${escapeHtml(artifact.profile.id)}</code> (digest <code>${escapeHtml(artifact.profile.digest)}</code>)</li>
+<li>Profile: <code>${escapeHtml(artifact.profile.id)}</code> (digest <code>${escapeHtml(artifact.profile.digest)}</code>, tier: ${escapeHtml(formatProfileTierLabel(inferProfileTier(artifact.profile.id)))})</li>
 <li>Runner mode: ${escapeHtml(artifact.environment.mode)}</li>
 <li>Hardware / OS summary from the Environment section</li>
 <li>Cold/warm and network policy from the profile stages</li>
@@ -143,6 +150,7 @@ ${statusBanner(artifact.status)}
 <li>Suite: ${escapeHtml(artifact.suiteVersion)}</li>
 <li>Status: ${escapeHtml(artifact.status)}</li>
 <li>Profile: <code>${escapeHtml(artifact.profile.id)}</code> (digest <code>${escapeHtml(artifact.profile.digest)}</code>)</li>
+<li>Profile tier: ${escapeHtml(formatProfileTierLabel(inferProfileTier(artifact.profile.id)))}</li>
 <li>Profile path: <code>${escapeHtml(artifact.profile.path)}</code></li>
 <li>Runner mode: ${escapeHtml(artifact.environment.mode)}</li>
 <li>Iterations: warmup ${artifact.plan.warmup}, measured ${artifact.plan.measured}</li>

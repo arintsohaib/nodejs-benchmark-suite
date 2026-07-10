@@ -1,0 +1,39 @@
+schemaVersion: 1
+id: nextjs-app-benchmark-slow
+description: >
+  [benchmark-slow] Optional slow official profile for template nextjs-app (small).
+  Cold install, typecheck, and next build across npm, pnpm, and Yarn Berry with warmup
+  and three measured iterations. Network required. Lab-only; never default CI.
+workload:
+  template: nextjs-app
+  size: small
+  seed: 1
+matrix:
+  packageManager: [npm, pnpm, yarn]
+stages:
+  - id: install
+    action: packageManager.install
+    cache: cold
+    network: true
+    timeoutMs: 600000
+  - id: typecheck
+    action: project.typecheck
+    cache: warm
+    timeoutMs: 300000
+  - id: build
+    action: project.build
+    cache: warm
+    timeoutMs: 900000
+iterations:
+  warmup: 1
+  measured: 3
+runner:
+  type: native
+metrics:
+  collectors:
+    - wall
+reporting:
+  formats:
+    - json
+    - markdown
+    - html

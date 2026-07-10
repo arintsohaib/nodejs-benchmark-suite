@@ -1,6 +1,6 @@
 # Metrics Engine
 
-**Status:** Partial — wall + rusage + disk-usage (S15); opt-in IQR outliers (S21); docker-stats later  
+**Status:** Partial — wall + rusage + disk-usage (S15); docker-stats (S25); opt-in IQR outliers (S21)  
 **Last updated:** July 2026
 
 ---
@@ -75,10 +75,13 @@ Collectors must be safe if `stop` is called after failure.
 - Emits `workspaceBytesBefore`, `workspaceBytesAfter`, `workspaceBytesDelta`
 - Runs outside the process wall timer (does not inflate `durationMs`)
 
-### 5.4 `docker-stats`
+### 5.4 `docker-stats` (S25)
 
-- Samples `docker stats` during stage (interval configurable)
-- Emits averages/max for CPU% and memory
+- Samples `docker stats --no-stream` during the stage (interval ≥ **200ms**, default 200ms)
+- Requires Docker stage context (`containerName`); skips gracefully on native runs
+- Emits `containerCpuPercentAvg`, `containerCpuPercentMax`, `containerMemBytesAvg`, `containerMemMaxBytes`
+- Tags: `accuracy: best-effort`, `scope: container`
+- Failed ticks / empty series → no samples (never fails the stage)
 
 ### 5.5 `env-tags` (metadata)
 

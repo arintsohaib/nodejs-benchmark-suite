@@ -59,6 +59,18 @@ export {
   DiskUsageCollector,
 } from "./metrics/disk-usage-collector.js";
 export {
+  createDockerStatsCollector,
+  DockerStatsCollector,
+  MIN_DOCKER_STATS_INTERVAL_MS,
+  parseDockerStatsCpuPercent,
+  parseDockerStatsJsonLine,
+  parseDockerStatsMemUsageBytes,
+  sampleDockerStatsViaCli,
+  type DockerStatsCollectorOptions,
+  type DockerStatsPoint,
+  type DockerStatsSampler,
+} from "./metrics/docker-stats-collector.js";
+export {
   runWithOptionalCollectors,
   samplesToMetricsRecord,
   unitForMetric,
@@ -156,7 +168,13 @@ export {
 } from "./reporting/write-leaderboard.js";
 export { assertValidLeaderboard, isValidLeaderboard } from "./reporting/validate-leaderboard.js";
 export { loadRunArtifact } from "./reporting/load-run-artifact.js";
-export { truncateText, renderCitationBlock } from "./reporting/format.js";
+export {
+  truncateText,
+  renderCitationBlock,
+  inferProfileTier,
+  formatProfileTierLabel,
+  type ProfileTier,
+} from "./reporting/format.js";
 export {
   writeRunArtifact,
   type WriteRunArtifactOptions,
@@ -217,8 +235,20 @@ export {
   type DockerDiscovery,
   type ResolvedDockerImage,
 } from "./runners/docker/index.js";
-export { runDoctor, type DoctorResult } from "./cli/doctor.js";
-export { listProfiles, type ProfileListItem } from "./cli/list-profiles.js";
+export {
+  runDoctor,
+  formatDoctorHuman,
+  type DoctorResult,
+  type DoctorCheck,
+} from "./cli/doctor.js";
+export { listProfiles, formatProfileListHuman, type ProfileListItem } from "./cli/list-profiles.js";
+export {
+  CLI_VIA_PNPM,
+  CLI_VIA_DIST,
+  MIN_NODE_MAJOR,
+  cliCommand,
+  cliInvocationHelpLines,
+} from "./cli/invocation.js";
 export { runCli } from "./cli.js";
 
 export {

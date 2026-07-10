@@ -184,7 +184,7 @@ When publishing results externally, include:
 4. Full `run.json` or link to it
 5. Statement of cold/warm and network policy
 
-Markdown and HTML include a **Citation** section with a prefilled blurb (no winner claims).
+Markdown and HTML include a **Citation** section with a prefilled blurb (no winner claims). Snapshots also show **Profile tier** (`smoke` / `benchmark` / `benchmark-slow` / custom) derived from the profile id.
 
 ---
 

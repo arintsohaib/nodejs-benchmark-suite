@@ -1,6 +1,7 @@
 import { mkdir } from "node:fs/promises";
 import { isAbsolute, join, resolve } from "node:path";
 import { cellCacheRoot } from "../adapters/package-managers/cache-dirs.js";
+import { readLogTail } from "../cli/read-log-tail.js";
 import type { JsBenchConfig } from "../config/types.js";
 import { BenchError, ExitCode } from "../errors/bench-error.js";
 import type { Logger } from "../logging/logger.js";
@@ -305,10 +306,15 @@ export async function executeRun(options: ExecuteRunOptions): Promise<ExecuteRun
           if (result.status === "failed") {
             const message = `Stage ${stage.id} failed (cell ${cell.cellId}, ${iter.kind} #${iter.index})`;
             warnings.push(message);
+            const stdoutTail = await readLogTail(result.artifacts?.stdout);
+            const stderrTail = await readLogTail(result.artifacts?.stderr);
             options.logger.warn(message, {
               durationMs: result.durationMs,
               stdout: result.artifacts?.stdout,
               stderr: result.artifacts?.stderr,
+              ...(stdoutTail !== undefined ? { stdoutTail } : {}),
+              ...(stderrTail !== undefined ? { stderrTail } : {}),
+              hint: "Open the stdout/stderr log paths above; tails are included when non-empty.",
             });
             if (!continueOnError) {
               abortRemaining = true;

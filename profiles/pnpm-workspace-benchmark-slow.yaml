@@ -1,0 +1,39 @@
+schemaVersion: 1
+id: pnpm-workspace-benchmark-slow
+description: >
+  [benchmark-slow] Optional slow official profile for template pnpm-workspace (small).
+  Cold install, recursive typecheck, and recursive build with pnpm; warmup plus three
+  measured iterations. Network required. Lab-only; never default CI.
+workload:
+  template: pnpm-workspace
+  size: small
+  seed: 1
+matrix:
+  packageManager: [pnpm]
+stages:
+  - id: install
+    action: packageManager.install
+    cache: cold
+    network: true
+    timeoutMs: 600000
+  - id: typecheck
+    action: project.typecheck
+    cache: warm
+    timeoutMs: 300000
+  - id: build
+    action: project.build
+    cache: warm
+    timeoutMs: 600000
+iterations:
+  warmup: 1
+  measured: 3
+runner:
+  type: native
+metrics:
+  collectors:
+    - wall
+reporting:
+  formats:
+    - json
+    - markdown
+    - html

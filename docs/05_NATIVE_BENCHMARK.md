@@ -61,7 +61,7 @@ Library API: `runProcess` in `src/runners/native/process-runner.ts`.
 
 ## 4. Toolchain Discovery
 
-`jsbench doctor` (S8) and the native runner share resolution logic. Helpers live in `src/runners/native/discover.ts` (`discoverNativeToolchains`).
+`jsbench doctor` (S8; release-polish human summary) and the native runner share resolution logic. Helpers live in `src/runners/native/discover.ts` (`discoverNativeToolchains`). Doctor treats **Node.js ≥ 20** as required and package managers / Docker as optional, with actionable fixes when missing. Invoke as `pnpm jsbench doctor` from a clone.
 
 | Tool | Discovery |
 |------|-----------|

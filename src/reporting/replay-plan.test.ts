@@ -47,6 +47,7 @@ describe("buildReplayPlan", () => {
       ],
     );
     assert.ok(plan.suggestedCommands.some((c) => c.includes("run --profile native-smoke")));
+    assert.ok(plan.suggestedCommands.every((c) => c.startsWith("pnpm jsbench")));
     assert.ok(plan.notes.length >= 3);
   });
 

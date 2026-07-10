@@ -1,11 +1,11 @@
 schemaVersion: 1
-id: install-build-matrix
+id: nextjs-app-benchmark
 description: >
-  [benchmark] Standard official profile for template node-ts-lib (tiny). Cold install and
-  tsc build across npm and pnpm. Network required for install. Default CI only dry-runs
-  this profile; full execution is optional (see README / JSBENCH_SLOW_TESTS).
+  [benchmark] Standard official profile for template nextjs-app (tiny). Cold install,
+  typecheck, and next build across npm and pnpm. Network required for install. Not run
+  in default CI (next build is heavy); use for publishable local/lab comparisons.
 workload:
-  template: node-ts-lib
+  template: nextjs-app
   size: tiny
   seed: 1
 matrix:
@@ -16,10 +16,14 @@ stages:
     cache: cold
     network: true
     timeoutMs: 300000
+  - id: typecheck
+    action: project.typecheck
+    cache: warm
+    timeoutMs: 180000
   - id: build
     action: project.build
     cache: warm
-    timeoutMs: 120000
+    timeoutMs: 600000
 iterations:
   warmup: 0
   measured: 1

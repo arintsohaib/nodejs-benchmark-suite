@@ -1,6 +1,6 @@
 # Roadmap
 
-**Status:** M0–**M6 done** (`1.0.0`); post-1.0 S19–S24 done — see §3 for remaining themes  
+**Status:** M0–**M6 done** (`1.0.0`); post-1.0 S19–S26 + polish → **`1.1.0-rc.1`**; see §3 for remaining themes  
 **Last updated:** July 2026
 
 ---
@@ -164,7 +164,7 @@ flowchart LR
 
 - Collector/reporter plugin loading — **done (S15)**
 - Additional collectors (`rusage`, `disk-usage`) — **done (S15)**
-- Workspace templates for Tailwind / workspace packages — **done** (`nextjs-app-tailwind` S23; `pnpm-workspace` S24)
+- Workspace templates for Tailwind / workspace packages — **done** (`nextjs-app-tailwind` S23; `pnpm-workspace` S24; official profiles S26)
 - Security review of shell/docker paths — **done (S16)**
 - Performance pass on orchestration overhead — **done (S16)**
 
@@ -200,12 +200,15 @@ flowchart LR
 
 ## 3. Post-1.0 Themes (Backlog)
 
+**Shipped in `1.1.0-rc.1`:** S19 regression gates, S20 replay, S21 IQR outliers, S22 local leaderboard, S23–S26 templates/profiles/collectors, release polish, RC checklist / hardware plan.
+
+Still open:
+
 - macOS / Windows runners (methodology adaptations)
 - Remote agent mode for lab farms
-- Regression gates in CI (threshold diffs) — **done (S19)**
-- Optional result directory format for community leaderboards (still local-first) — **done (S22)**
 - Compose-based multi-service fixtures
-- Statistical outlier rules (explicit opt-in) — **done (S21)**
+- Result *upload* (local leaderboard format done — S22)
+- Official profile enabling `docker-stats` (collector done — S25)
 
 ---
 

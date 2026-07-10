@@ -21,8 +21,21 @@ async function loadCalibration(): Promise<CalibratedDigests> {
   return JSON.parse(raw) as CalibratedDigests;
 }
 
-/** Official publishable profile ids (excludes foundation-sample helper). */
-const OFFICIAL_PROFILE_IDS = ["native-smoke", "install-build-matrix", "docker-smoke"] as const;
+/** Official publishable / catalog profile ids (excludes foundation-sample helper). */
+const OFFICIAL_PROFILE_IDS = [
+  "native-smoke",
+  "docker-smoke",
+  "install-build-matrix",
+  "nextjs-app-smoke",
+  "nextjs-app-benchmark",
+  "nextjs-app-benchmark-slow",
+  "nextjs-app-tailwind-smoke",
+  "nextjs-app-tailwind-benchmark",
+  "nextjs-app-tailwind-benchmark-slow",
+  "pnpm-workspace-smoke",
+  "pnpm-workspace-benchmark",
+  "pnpm-workspace-benchmark-slow",
+] as const;
 
 describe("built-in profile calibration (S17)", () => {
   it("lists expected built-in profiles", async () => {

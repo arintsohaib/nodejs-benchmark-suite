@@ -1,15 +1,24 @@
 {
-  "comment": "Calibrated digests for built-in profiles and tiny template snapshots (S17). Re-baseline when profiles/templates/pins change.",
+  "comment": "Calibrated digests for built-in profiles and tiny template snapshots. Re-baseline when profiles/templates/pins change.",
   "calibratedAt": "2026-07-11",
-  "suiteVersionAtCalibration": "1.0.0",
+  "suiteVersionAtCalibration": "1.1.0-rc.1",
   "profiles": {
-    "docker-smoke": "30ae42aa976dad77be971c27f2d486299d35b9b8044a93809a34e370c5ea4dcf",
+    "docker-smoke": "7eb524cfecab99d3ad5e2c88570efadd50015c1e5fa4a9945920c0e32893b48e",
     "foundation-sample": "bef02f288e533d3b185df29f41d98055543df7c6b34d258f5bba12c524431d89",
-    "install-build-matrix": "f28e62577a91843f21fd60e8ef3ee6a9c0fbd67038082330b18a42fa1b59b310",
-    "native-smoke": "082cad3d8100b0ee3c49a7a647147aaed4be973539ba546f89748fcec22e8ada"
+    "install-build-matrix": "25b87fd6a7399eeaa6eb5a35426141119eb74562bdd5df8fd470e97b030e1464",
+    "native-smoke": "6b61d0d631c9339885bc80240b5f6288aa46f8f3055e3a889a31890f6bffa3a2",
+    "nextjs-app-benchmark": "3bc4d89feb7c5fd44cc294d743e7a82921085619c91d9ebfee29cbccb0d77e23",
+    "nextjs-app-benchmark-slow": "829b12f9b5b864a69ce3de998bff3c1621288f3f574ee1b926817c26bb874caa",
+    "nextjs-app-smoke": "d98a9d0751cfd3f76ea6873767803f3d7c80b615fcee34a5171f950cbc4b2fb2",
+    "nextjs-app-tailwind-benchmark": "e0d02a6ebbd36bf33b439dffd60da03bfc010074b8a86189da3a9fa8cbcfa201",
+    "nextjs-app-tailwind-benchmark-slow": "7750bab1309d618b310d548ba066c58383ba647bddc6c1e3d121386d9a248764",
+    "nextjs-app-tailwind-smoke": "f0d9cd7b744b70822bb37150556ec9292a122bfc16f06c3245ff1e5b75fdff32",
+    "pnpm-workspace-benchmark": "a04a5fbe57897ddfb427b1e82da34c73fba4d0980c0fec610a433d8fdf14273a",
+    "pnpm-workspace-benchmark-slow": "41ad1bea00d134bba8894a5d0808702baa57bbbd582287d9ed26bff1afb39aad",
+    "pnpm-workspace-smoke": "acaf029ca144c35641f6443d8131a7b913b234efafec9c9b89ac1f8fa91e8ff5"
   },
   "templates": {
-    "node-ts-lib@tiny@1": "a2615460b5767b56b4d4cfa5c3fa8db97b3c0683cf91961386961d233e5f53a3",
+    "node-ts-lib@tiny@1": "5f20f1942bd784a4c2bba6ef39c84eb57d8acb66301bb7c0daab1d60161a54e1",
     "nextjs-app@tiny@1": "126b70a22cafaca0a3199fffb7dfc528822e503f461e6a2536d200c9844dd770",
     "nextjs-app-tailwind@tiny@1": "3ba02362b10c8c08ecb84bf01de79748d6d5685e7eaab8c899fe1adcd640375f",
     "pnpm-workspace@tiny@1": "e89032ae03e1afaa078d63d4f2917c6c11924b7fb7fcf3812f4013e90cddcadd"

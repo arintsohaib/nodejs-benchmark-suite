@@ -1,6 +1,6 @@
 # Schema Compatibility (v1)
 
-**Status:** Frozen for suite `1.0.0` (S18)  
+**Status:** Frozen for suite **1.x** (locked at `1.0.0` / S18; still applies to `1.1.0-rc.1`)  
 **Last updated:** July 2026  
 **Companion:** [09_VERSION_POLICY.md](09_VERSION_POLICY.md) · [08_REPORTING.md](08_REPORTING.md)
 
@@ -8,7 +8,7 @@
 
 ## 1. Purpose
 
-This statement describes the **compatibility window** for public JSON contracts in suite **`1.0.0`**. Breaking changes to these contracts require a suite **MAJOR** bump and a new schema compatibility revision.
+This statement describes the **compatibility window** for public JSON contracts in suite **1.x** (first frozen for **`1.0.0`**). Breaking changes to these contracts require a suite **MAJOR** bump and a new schema compatibility revision. Minor/pre-release lines such as **`1.1.0-rc.1`** may only add **optional** fields.
 
 ---
 

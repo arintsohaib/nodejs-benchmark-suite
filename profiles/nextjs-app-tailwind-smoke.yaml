@@ -1,0 +1,35 @@
+schemaVersion: 1
+id: nextjs-app-tailwind-smoke
+description: >
+  [smoke] Fast official profile for template nextjs-app-tailwind (tiny). Cold install +
+  typecheck with pnpm. Network required for install. Does not run next build. Suitable
+  for dry-run in CI; full execution is optional and needs registry access.
+workload:
+  template: nextjs-app-tailwind
+  size: tiny
+  seed: 1
+matrix:
+  packageManager: [pnpm]
+stages:
+  - id: install
+    action: packageManager.install
+    cache: cold
+    network: true
+    timeoutMs: 300000
+  - id: typecheck
+    action: project.typecheck
+    cache: warm
+    timeoutMs: 180000
+iterations:
+  warmup: 0
+  measured: 1
+runner:
+  type: native
+metrics:
+  collectors:
+    - wall
+reporting:
+  formats:
+    - json
+    - markdown
+    - html

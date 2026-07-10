@@ -1,0 +1,35 @@
+schemaVersion: 1
+id: pnpm-workspace-smoke
+description: >
+  [smoke] Fast official profile for template pnpm-workspace (tiny). Cold install +
+  recursive typecheck with pnpm only (template is pnpm-oriented). Network required for
+  install. Suitable for dry-run in CI; full execution is optional.
+workload:
+  template: pnpm-workspace
+  size: tiny
+  seed: 1
+matrix:
+  packageManager: [pnpm]
+stages:
+  - id: install
+    action: packageManager.install
+    cache: cold
+    network: true
+    timeoutMs: 300000
+  - id: typecheck
+    action: project.typecheck
+    cache: warm
+    timeoutMs: 180000
+iterations:
+  warmup: 0
+  measured: 1
+runner:
+  type: native
+metrics:
+  collectors:
+    - wall
+reporting:
+  formats:
+    - json
+    - markdown
+    - html

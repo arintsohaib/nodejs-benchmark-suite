@@ -7,6 +7,7 @@
 - Suite: 0.1.0-0
 - Status: partial
 - Profile: `fixture-profile` (digest `abc123digest`)
+- Profile tier: custom / unofficial
 - Profile path: `profiles/fixture-profile.yaml`
 - Runner mode: native
 - Iterations: warmup 0, measured 3
@@ -50,7 +51,7 @@ When citing these results, include at least:
 
 - Suite version: `0.1.0-0`
 - Run id: `20260711T000000Z-fixture`
-- Profile: `fixture-profile` (digest `abc123digest`)
+- Profile: `fixture-profile` (digest `abc123digest`, tier: custom / unofficial)
 - Runner mode: native
 - Hardware / OS summary from the Environment section
 - Cold/warm and network policy from the profile stages

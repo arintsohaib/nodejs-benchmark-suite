@@ -1,6 +1,6 @@
 # Implementation Plan
 
-**Status:** Complete through S24 (`pnpm-workspace`); further work from parking lot / roadmap themes  
+**Status:** Complete through S26 (official template profiles); further work from parking lot / roadmap themes  
 **Last updated:** July 2026  
 **Companion docs:** [12_ROADMAP.md](12_ROADMAP.md) · [13_TASKS.md](13_TASKS.md) · [../AGENTS.md](../AGENTS.md)
 
@@ -91,6 +91,8 @@ flowchart TB
   S21 --> S22[S22_Local_leaderboard]
   S22 --> S23[S23_Nextjs_Tailwind_template]
   S23 --> S24[S24_Pnpm_workspace_template]
+  S24 --> S25[S25_Docker_stats_collector]
+  S25 --> S26[S26_Official_template_profiles]
 ```
 
 ---
@@ -623,6 +625,41 @@ flowchart TB
 
 ---
 
+### S25 — `docker-stats` collector (post-1.0) ✅
+
+**Goal:** Optional best-effort container CPU/memory sampling during Docker stages.
+
+**Work:**
+
+- Built-in collector id `docker-stats` (interval ≥ 200ms)
+- `StageContext.docker.containerName` wired from Docker session
+- Metrics: `containerCpuPercentAvg|Max`, `containerMemBytesAvg`, `containerMemMaxBytes`
+- Graceful skip on native / sample failures; injectable sampler for tests
+- No live Docker required in default CI
+
+**Test gate:** Parser unit tests; injected-sampler integration via `runWithOptionalCollectors`; registry lists id.
+
+**Maps to:** T-POST-05
+
+---
+
+### S26 — Official profiles for Next / Tailwind / pnpm-workspace ✅
+
+**Goal:** Close the template↔profile gap with production-quality built-in profiles and clear tiers.
+
+**Work:**
+
+- Nine profiles: `{nextjs-app,nextjs-app-tailwind,pnpm-workspace}` × `{smoke,benchmark,benchmark-slow}`
+- Tier tags in descriptions; report `Profile tier` in Markdown/HTML
+- Catalog: `profiles/README.md`; digests re-baselined
+- Methodology: `network: true` on installs; cold install; smoke omits `next build`; slow uses larger size + more iterations
+
+**Test gate:** Calibration list + digest match + dry-run all built-ins; list-profiles includes new ids; golden report updates.
+
+**Maps to:** T-POST-06
+
+---
+
 ## 6. Milestone ↔ Slice Map
 
 | Roadmap | Slices | Ship tag (suggested) |
@@ -634,7 +671,7 @@ flowchart TB
 | M4 | S14 | `v0.4.0` |
 | M5 | S15–S16 | `v0.5.0` |
 | M6 | S17–S18 | `v1.0.0` |
-| Post-1.0 | S19–S24+ | minor bumps as needed |
+| Post-1.0 | S19–S26+ | minor bumps as needed |
 
 ---
 
@@ -658,6 +695,8 @@ flowchart TB
 | S22 | Local `jsbench leaderboard` index (no upload / no winners) |
 | S23 | `nextjs-app-tailwind` template (Tailwind v4 pins) |
 | S24 | `pnpm-workspace` multi-package template (`kind: workspace`) |
+| S25 | `docker-stats` optional collector (CPU%/mem avg+max) |
+| S26 | Official Next/Tailwind/workspace profiles (smoke/benchmark/slow) |
 
 Never leave `jsbench run` registered if it throws because reporter/runner imports are missing—wire commands only when their stack exists, or guard with feature flags.
 
