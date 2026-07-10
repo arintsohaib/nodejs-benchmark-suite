@@ -1,6 +1,6 @@
 # Workload Generator Engine
 
-**Status:** Partial — core + templates (S11, S23 Tailwind) + `run` materialize (S12); Docker S13
+**Status:** Partial — core + templates (S11, S23 Tailwind, S24 workspace) + `run` materialize (S12); Docker S13
 **Last updated:** July 2026
 
 ---
@@ -115,7 +115,7 @@ JSON Schema: `schemas/template-manifest.schema.json`.
 | `node-ts-lib` | TypeScript library with `tsc` build | **S11** |
 | `nextjs-app` | Next.js App Router + TS | **S11** |
 | `nextjs-app-tailwind` | Next.js + Tailwind CSS v4 | **S23** |
-| `pnpm-workspace` | Multi-package workspace | deferred (parking lot) |
+| `pnpm-workspace` | Multi-package pnpm workspace | **S24** |
 
 ---
 
@@ -176,7 +176,7 @@ Implemented as `createGenerator()` / `materialize` / `digestWorkspace` / `cleanW
 - Digest stability tests across two consecutive materializations — **done (S10)**
 - Property test: changing seed changes digest — **done (S10)**
 - Property test: excluded dirs do not affect digest — **done (S10)**
-- Snapshot tests for `tiny` renders of each full template — **done (S11, S23)**
+- Snapshot tests for `tiny` renders of each full template — **done (S11, S23, S24)**
 
 ---
 

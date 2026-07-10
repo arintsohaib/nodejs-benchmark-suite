@@ -21,33 +21,49 @@ async function applyVersionResolver(
   workspacePath: string,
   resolver: VersionResolver,
 ): Promise<void> {
-  const pkgPath = join(workspacePath, "package.json");
-  const { readFile } = await import("node:fs/promises");
-  let raw: string;
+  const { readdir, readFile, stat } = await import("node:fs/promises");
+  const pkgPaths: string[] = [join(workspacePath, "package.json")];
+  const packagesDir = join(workspacePath, "packages");
   try {
-    raw = await readFile(pkgPath, "utf8");
-  } catch {
-    return;
-  }
-  const pkg = JSON.parse(raw) as {
-    dependencies?: Record<string, string>;
-    devDependencies?: Record<string, string>;
-  };
-  let changed = false;
-  for (const field of ["dependencies", "devDependencies"] as const) {
-    const block = pkg[field];
-    if (block === undefined) {
-      continue;
-    }
-    for (const [name, spec] of Object.entries(block)) {
-      if (spec.startsWith("policy:")) {
-        block[name] = await Promise.resolve(resolver.resolve(spec, name));
-        changed = true;
+    const entries = await readdir(packagesDir);
+    for (const name of entries.sort()) {
+      const child = join(packagesDir, name);
+      const info = await stat(child).catch(() => undefined);
+      if (info?.isDirectory()) {
+        pkgPaths.push(join(child, "package.json"));
       }
     }
+  } catch {
+    // No packages/ directory — single-package templates.
   }
-  if (changed) {
-    await writeFile(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`, "utf8");
+
+  for (const pkgPath of pkgPaths) {
+    let raw: string;
+    try {
+      raw = await readFile(pkgPath, "utf8");
+    } catch {
+      continue;
+    }
+    const pkg = JSON.parse(raw) as {
+      dependencies?: Record<string, string>;
+      devDependencies?: Record<string, string>;
+    };
+    let changed = false;
+    for (const field of ["dependencies", "devDependencies"] as const) {
+      const block = pkg[field];
+      if (block === undefined) {
+        continue;
+      }
+      for (const [name, spec] of Object.entries(block)) {
+        if (spec.startsWith("policy:")) {
+          block[name] = await Promise.resolve(resolver.resolve(spec, name));
+          changed = true;
+        }
+      }
+    }
+    if (changed) {
+      await writeFile(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`, "utf8");
+    }
   }
 }
 

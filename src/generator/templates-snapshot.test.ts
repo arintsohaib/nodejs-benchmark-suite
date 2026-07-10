@@ -46,10 +46,32 @@ const FILE_INVENTORY = {
     "postcss.config.mjs",
     "tsconfig.json",
   ],
+  "pnpm-workspace": [
+    "package.json",
+    "packages/pkg-000/package.json",
+    "packages/pkg-000/src/generated/index.ts",
+    "packages/pkg-000/src/generated/m000.ts",
+    "packages/pkg-000/src/generated/m001.ts",
+    "packages/pkg-000/src/index.ts",
+    "packages/pkg-000/tsconfig.json",
+    "packages/pkg-001/package.json",
+    "packages/pkg-001/src/generated/index.ts",
+    "packages/pkg-001/src/generated/m000.ts",
+    "packages/pkg-001/src/generated/m001.ts",
+    "packages/pkg-001/src/index.ts",
+    "packages/pkg-001/tsconfig.json",
+    "pnpm-workspace.yaml",
+    "tsconfig.base.json",
+  ],
 } as const;
 
 describe("template tiny snapshots", () => {
-  for (const templateId of ["node-ts-lib", "nextjs-app", "nextjs-app-tailwind"] as const) {
+  for (const templateId of [
+    "node-ts-lib",
+    "nextjs-app",
+    "nextjs-app-tailwind",
+    "pnpm-workspace",
+  ] as const) {
     it(`materializes ${templateId} tiny with stable digest and file inventory`, async () => {
       const calibration = JSON.parse(
         await readFile(join(ROOT, "profiles", "calibrated-digests.json"), "utf8"),
@@ -79,6 +101,25 @@ describe("template tiny snapshots", () => {
         const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
         for (const [name, spec] of Object.entries(allDeps)) {
           assert.ok(!spec.startsWith("policy:"), `${name} should be pinned, got ${spec}`);
+        }
+
+        if (templateId === "pnpm-workspace") {
+          const child = JSON.parse(
+            await readFile(join(workspacePath, "packages/pkg-001/package.json"), "utf8"),
+          ) as {
+            dependencies?: Record<string, string>;
+            devDependencies?: Record<string, string>;
+          };
+          assert.equal(child.dependencies?.["@jsbench/pkg-000"], "workspace:*");
+          for (const [name, spec] of Object.entries({
+            ...child.dependencies,
+            ...child.devDependencies,
+          })) {
+            if (spec === "workspace:*") {
+              continue;
+            }
+            assert.ok(!spec.startsWith("policy:"), `child ${name} should be pinned, got ${spec}`);
+          }
         }
       } finally {
         await rm(root, { recursive: true, force: true });

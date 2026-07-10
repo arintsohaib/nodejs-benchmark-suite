@@ -4,7 +4,7 @@ Open-source **engineering benchmark platform** for measuring modern JavaScript *
 
 Compare developer-loop cost across hardware, storage, operating systems, Docker setups, package managers, and project sizes—on **native Linux** and in **Docker**.
 
-**Status:** M0–**M6 complete** (`1.0.0`); **S19–S23** post-1.0 done  
+**Status:** M0–**M6 complete** (`1.0.0`); **S19–S24** post-1.0 done  
 **Suite version:** `1.0.0` (tag: `v1.0.0`)
 
 **AI agents:** follow [AGENTS.md](AGENTS.md) (required reading and milestone workflow).
@@ -35,7 +35,7 @@ This is **not** a web application, demo, or HTTP load tester. It is a CLI labora
 | `jsbench validate-profile <path\|id>` | Available |
 | `jsbench run --profile <path\|id> --dry-run` | Available |
 | `jsbench run --profile <path\|id>` | Available (native + Docker) |
-| `jsbench generate --template <id>` | Available (`fixture-lib`, `node-ts-lib`, `nextjs-app`, `nextjs-app-tailwind`) |
+| `jsbench generate --template <id>` | Available (`fixture-lib`, `node-ts-lib`, `nextjs-app`, `nextjs-app-tailwind`, `pnpm-workspace`) |
 | `jsbench list-profiles` | Available |
 | `report` | Re-render Markdown/HTML from a run directory |
 | `report diff` | Compare two runs → `diff.md` + `diff.json`; optional `--fail-on-regression` (exit 7) |
@@ -104,6 +104,9 @@ node dist/cli.js generate --template nextjs-app --size tiny --seed 1
 
 # Next.js + Tailwind CSS v4 (PostCSS)
 node dist/cli.js generate --template nextjs-app-tailwind --size tiny --seed 1
+
+# pnpm multi-package workspace
+node dist/cli.js generate --template pnpm-workspace --size tiny --seed 1
 ```
 
 ---
@@ -279,7 +282,7 @@ nodejs-benchmark-suite/
 ├── profiles/       # Built-in profiles (incl. native-smoke)
 ├── fixtures/       # Static workloads (pre-generator)
 ├── docker/         # Image policy pins (+ future Dockerfiles)
-├── templates/      # Workload templates (fixture-lib, node-ts-lib, nextjs-app, nextjs-app-tailwind)
+├── templates/      # Workload templates (fixture-lib, node-ts-lib, nextjs-app, nextjs-app-tailwind, pnpm-workspace)
 ├── packages/       # Deferred monorepo split (see packages/README.md)
 ├── docker/         # Runner images / compose (future)
 ├── scripts/        # Maintainer scripts (future)
@@ -302,7 +305,7 @@ nodejs-benchmark-suite/
 | **M4 (S14)** | HTML reports + run diffs — **done** |
 | **M5 (S15–S16)** | Plugins + collectors + hardening — **done** |
 | **M6 (S17–S18)** | Calibration + release `1.0.0` — **done** |
-| **Post-1.0 (S19–S23)** | Regression gates, `replay`, IQR, leaderboard, Tailwind template — **done** |
+| **Post-1.0 (S19–S24)** | Regression gates, `replay`, IQR, leaderboard, Tailwind + pnpm-workspace templates — **done** |
 
 Details: [docs/12_ROADMAP.md](docs/12_ROADMAP.md) · Tasks: [docs/13_TASKS.md](docs/13_TASKS.md) · Slices: [docs/17_IMPLEMENTATION_PLAN.md](docs/17_IMPLEMENTATION_PLAN.md)
 

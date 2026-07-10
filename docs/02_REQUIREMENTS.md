@@ -178,6 +178,6 @@ Requirements are delivered incrementally. A milestone must not claim an `FR-*` u
 | M2 Generator + matrices | FR-GEN-01..05 except multi-package workspace; FR-ENG-01 full matrix; package-manager adapters; FR-TEST-03; remaining FR-CLI-02 commands `list-profiles` / `generate` |
 | M3 Docker runner | FR-DOC-* |
 | M4 Reporting polish | FR-REP-03..05; FR-CLI-02 `report` / `report diff`; FR-TEST-05 |
-| M5 Extensibility | FR-EXT-*; optional FR-GEN-02 workspace template; optional FR-MET-02 collectors |
+| M5 Extensibility | FR-EXT-*; FR-GEN-02 workspace template (**S24**); optional FR-MET-02 collectors |
 
 See [12_ROADMAP.md](12_ROADMAP.md), [13_TASKS.md](13_TASKS.md), and [17_IMPLEMENTATION_PLAN.md](17_IMPLEMENTATION_PLAN.md).

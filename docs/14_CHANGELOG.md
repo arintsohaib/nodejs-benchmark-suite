@@ -18,6 +18,7 @@ Schema compatibility: [18_SCHEMA_COMPATIBILITY.md](18_SCHEMA_COMPATIBILITY.md).
 - **S21:** Opt-in `metrics.outlierRule: iqr` (Tukey fences); `outlierFilter.dropped` in `run.json` + warnings; raw results unchanged.
 - **S22:** `jsbench leaderboard` writes local-first `leaderboard.json` + `leaderboard.md` (`schemas/leaderboard.schema.json`); no upload; no winner rankings.
 - **S23:** Template `nextjs-app-tailwind` (Tailwind CSS v4 + PostCSS); pins in `resolved-versions.json`; tiny digest calibrated.
+- **S24:** Template `pnpm-workspace` (`kind: workspace`); multi-package `packages/pkg-NNN` with `workspace:*` edges; pin resolver walks nested manifests.
 
 ### Changed
 
@@ -25,8 +26,9 @@ Schema compatibility: [18_SCHEMA_COMPATIBILITY.md](18_SCHEMA_COMPATIBILITY.md).
 - Version policy §6 documents `replay` instead of “may later add”.
 - Metrics §9 documents opt-in IQR (no longer “optional later”).
 - FR-CLI-02 / reporting docs include `leaderboard`.
-- Generator template table marks `nextjs-app-tailwind` done; `pnpm-workspace` remains deferred.
+- Generator template table marks `nextjs-app-tailwind` and `pnpm-workspace` done (T-M5-07 complete).
 - Application renderer home title uses `jsbench-<templateId>` (post-S23 quality gate; `nextjs-app` digest unchanged).
+- Post-S24 quality gate: workspace renderer rejects `packageCount < 1`.
 
 ---
 

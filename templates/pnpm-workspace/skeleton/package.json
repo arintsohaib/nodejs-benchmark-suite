@@ -1,0 +1,13 @@
+{
+  "name": "jsbench-pnpm-workspace",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r run build",
+    "typecheck": "pnpm -r run typecheck"
+  },
+  "devDependencies": {
+    "typescript": "policy:latest-stable",
+    "@types/node": "policy:latest-stable"
+  }
+}

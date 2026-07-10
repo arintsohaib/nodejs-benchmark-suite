@@ -1,6 +1,6 @@
 # Implementation Plan
 
-**Status:** Complete through S23 (`nextjs-app-tailwind`); further work from parking lot / roadmap themes  
+**Status:** Complete through S24 (`pnpm-workspace`); further work from parking lot / roadmap themes  
 **Last updated:** July 2026  
 **Companion docs:** [12_ROADMAP.md](12_ROADMAP.md) · [13_TASKS.md](13_TASKS.md) · [../AGENTS.md](../AGENTS.md)
 
@@ -90,6 +90,7 @@ flowchart TB
   S20 --> S21[S21_Opt_in_IQR_outliers]
   S21 --> S22[S22_Local_leaderboard]
   S22 --> S23[S23_Nextjs_Tailwind_template]
+  S23 --> S24[S24_Pnpm_workspace_template]
 ```
 
 ---
@@ -583,17 +584,42 @@ flowchart TB
 - Tailwind v4 via `@import "tailwindcss"` + `@tailwindcss/postcss` + `postcss.config.mjs`
 - Offline pins: `tailwindcss`, `@tailwindcss/postcss`, `postcss` in `resolved-versions.json`
 - Tiny snapshot + calibrated digest (`nextjs-app-tailwind@tiny@1`)
-- **Not in this slice:** `pnpm-workspace` (remains parking lot)
+- **Not in this slice:** `pnpm-workspace` (deferred to S24)
 
 **Quality notes (post-S23 gate):**
 
 - Generated home `<h1>` uses `jsbench-<templateId>` (shared `renderNextAppTree`); `nextjs-app` digest unchanged
 - No built-in profile exercises this template yet; default CI does not run `next build`
-- Suggested follow-ups: optional profile for Tailwind matrices; `pnpm-workspace` (T-M5-07 remainder); or parking-lot `docker-stats` / Compose / Windows-macOS
+- Suggested follow-ups (historical at S23): optional Tailwind profile; `pnpm-workspace` (landed S24); parking-lot `docker-stats` / Compose / Windows-macOS
 
 **Test gate:** Snapshot inventory + digest; no `next build` in default CI.
 
 **Maps to:** T-M5-07 (partial)
+
+---
+
+### S24 — `pnpm-workspace` template (T-M5-07 complete) ✅
+
+**Goal:** Multi-package pnpm workspace workload for install/typecheck/recursive build matrices.
+
+**Work:**
+
+- Template `templates/pnpm-workspace/` (`produces.kind: workspace`)
+- Renderer `renderWorkspaceTree`: `packages/pkg-NNN` driven by `packageCount` × `fileCount`; later packages depend on previous via `workspace:*`
+- Pin resolver walks root + `packages/*/package.json`
+- Tiny snapshot + calibrated digest (`pnpm-workspace@tiny@1`)
+- Completes T-M5-07 (Tailwind in S23 + workspace in S24)
+
+**Quality notes (post-S24 gate):**
+
+- Approved after human review; nested `policy:*` pins and calibrated digests verified
+- Renderer rejects `packageCount < 1`; schema already requires `minimum: 1`
+- No built-in profile; default CI does not run recursive `pnpm install` / `-r build`
+- Suggested follow-ups: optional profiles for Tailwind/workspace templates; `docker-stats`; Compose; Windows/macOS
+
+**Test gate:** Snapshot inventory + digest; nested `policy:*` pins resolved; no recursive install in default CI.
+
+**Maps to:** T-M5-07 (done)
 
 ---
 
@@ -608,7 +634,7 @@ flowchart TB
 | M4 | S14 | `v0.4.0` |
 | M5 | S15–S16 | `v0.5.0` |
 | M6 | S17–S18 | `v1.0.0` |
-| Post-1.0 | S19–S23+ | minor bumps as needed |
+| Post-1.0 | S19–S24+ | minor bumps as needed |
 
 ---
 
@@ -631,6 +657,7 @@ flowchart TB
 | S21 | Opt-in `outlierRule: iqr` with explicit drops |
 | S22 | Local `jsbench leaderboard` index (no upload / no winners) |
 | S23 | `nextjs-app-tailwind` template (Tailwind v4 pins) |
+| S24 | `pnpm-workspace` multi-package template (`kind: workspace`) |
 
 Never leave `jsbench run` registered if it throws because reporter/runner imports are missing—wire commands only when their stack exists, or guard with feature flags.
 

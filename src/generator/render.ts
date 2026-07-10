@@ -46,12 +46,16 @@ async function stampPackageJson(
   const pkgRaw = await readFile(pkgPath, "utf8");
   const pkg = JSON.parse(pkgRaw) as Record<string, unknown>;
   pkg["name"] = `jsbench-${template.manifest.id}-s${params.seed}`;
-  pkg["jsbench"] = {
+  const jsbenchMeta: Record<string, unknown> = {
     templateId: template.manifest.id,
     size: params.size,
     seed: params.seed,
     fileCount: params.fileCount,
   };
+  if (template.manifest.produces.kind === "workspace") {
+    jsbenchMeta["packageCount"] = params.packageCount;
+  }
+  pkg["jsbench"] = jsbenchMeta;
   await writeFile(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`, "utf8");
 }
 
@@ -118,6 +122,91 @@ async function renderNextAppTree(
 }
 
 /**
+ * Multi-package pnpm workspace: `packages/pkg-NNN` libraries driven by `packageCount` × `fileCount`.
+ */
+async function renderWorkspaceTree(
+  workspacePath: string,
+  params: ExpandedWorkloadParams,
+): Promise<void> {
+  if (params.packageCount < 1) {
+    throw new BenchError(
+      "VALIDATION_ERROR",
+      `Workspace templates require packageCount >= 1 (got ${params.packageCount})`,
+      { packageCount: params.packageCount },
+    );
+  }
+  const packagesRoot = join(workspacePath, "packages");
+  await mkdir(packagesRoot, { recursive: true });
+
+  for (let p = 0; p < params.packageCount; p += 1) {
+    const pkgId = `pkg-${String(p).padStart(3, "0")}`;
+    const pkgDir = join(packagesRoot, pkgId);
+    const srcDir = join(pkgDir, "src", "generated");
+    await mkdir(srcDir, { recursive: true });
+
+    const exports: string[] = [];
+    for (let i = 0; i < params.fileCount; i += 1) {
+      const name = `m${String(i).padStart(3, "0")}`;
+      // Offset module indices by package so content differs across packages.
+      const moduleIndex = p * 1000 + i;
+      await writeFile(
+        join(srcDir, `${name}.ts`),
+        libraryModuleSource(moduleIndex, params.seed, params.tsComplexity),
+        "utf8",
+      );
+      exports.push(`export { default as ${name} } from "./${name}.js";`);
+    }
+    await writeFile(join(srcDir, "index.ts"), `${exports.join("\n")}\n`, "utf8");
+    await writeFile(
+      join(pkgDir, "src", "index.ts"),
+      `export * from "./generated/index.js";\n`,
+      "utf8",
+    );
+
+    const dependencies: Record<string, string> = {};
+    if (p > 0) {
+      const prevId = `pkg-${String(p - 1).padStart(3, "0")}`;
+      dependencies[`@jsbench/${prevId}`] = "workspace:*";
+    }
+
+    const pkgJson: Record<string, unknown> = {
+      name: `@jsbench/${pkgId}`,
+      version: "0.0.0",
+      private: true,
+      type: "module",
+      main: "./dist/index.js",
+      types: "./dist/index.d.ts",
+      scripts: {
+        build: "tsc -p tsconfig.json",
+        typecheck: "tsc -p tsconfig.json --noEmit",
+      },
+      ...(Object.keys(dependencies).length > 0 ? { dependencies } : {}),
+      devDependencies: {
+        typescript: "policy:latest-stable",
+        "@types/node": "policy:latest-stable",
+      },
+    };
+    await writeFile(join(pkgDir, "package.json"), `${JSON.stringify(pkgJson, null, 2)}\n`, "utf8");
+    await writeFile(
+      join(pkgDir, "tsconfig.json"),
+      `${JSON.stringify(
+        {
+          extends: "../../tsconfig.base.json",
+          compilerOptions: {
+            outDir: "dist",
+            rootDir: "src",
+          },
+          include: ["src/**/*.ts"],
+        },
+        null,
+        2,
+      )}\n`,
+      "utf8",
+    );
+  }
+}
+
+/**
  * Copy skeleton/ and emit deterministic generated sources for the template kind.
  */
 export async function renderTemplateTree(options: {
@@ -134,6 +223,8 @@ export async function renderTemplateTree(options: {
     await renderLibraryTree(options.workspacePath, options.params);
   } else if (kind === "application") {
     await renderNextAppTree(options.workspacePath, options.params, options.template.manifest.id);
+  } else if (kind === "workspace") {
+    await renderWorkspaceTree(options.workspacePath, options.params);
   } else {
     throw new BenchError(
       "VALIDATION_ERROR",

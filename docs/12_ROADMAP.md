@@ -1,6 +1,6 @@
 # Roadmap
 
-**Status:** M0–**M6 done** (`1.0.0`); post-1.0 S19–S23 done — see §3 for remaining themes  
+**Status:** M0–**M6 done** (`1.0.0`); post-1.0 S19–S24 done — see §3 for remaining themes  
 **Last updated:** July 2026
 
 ---
@@ -164,7 +164,7 @@ flowchart LR
 
 - Collector/reporter plugin loading — **done (S15)**
 - Additional collectors (`rusage`, `disk-usage`) — **done (S15)**
-- Workspace templates for Tailwind / workspace packages — **partial** (`nextjs-app-tailwind` S23; `pnpm-workspace` deferred)
+- Workspace templates for Tailwind / workspace packages — **done** (`nextjs-app-tailwind` S23; `pnpm-workspace` S24)
 - Security review of shell/docker paths — **done (S16)**
 - Performance pass on orchestration overhead — **done (S16)**
 

@@ -11,6 +11,7 @@
   "templates": {
     "node-ts-lib@tiny@1": "a2615460b5767b56b4d4cfa5c3fa8db97b3c0683cf91961386961d233e5f53a3",
     "nextjs-app@tiny@1": "126b70a22cafaca0a3199fffb7dfc528822e503f461e6a2536d200c9844dd770",
-    "nextjs-app-tailwind@tiny@1": "3ba02362b10c8c08ecb84bf01de79748d6d5685e7eaab8c899fe1adcd640375f"
+    "nextjs-app-tailwind@tiny@1": "3ba02362b10c8c08ecb84bf01de79748d6d5685e7eaab8c899fe1adcd640375f",
+    "pnpm-workspace@tiny@1": "e89032ae03e1afaa078d63d4f2917c6c11924b7fb7fcf3812f4013e90cddcadd"
   }
 }

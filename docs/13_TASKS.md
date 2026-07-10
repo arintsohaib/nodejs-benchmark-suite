@@ -1,6 +1,6 @@
 # Task Tracking
 
-**Status:** S23 complete (`nextjs-app-tailwind`); suite `1.0.0` — further post-1.0 via parking lot  
+**Status:** S24 complete (`pnpm-workspace`); suite `1.0.0` — further post-1.0 via parking lot  
 **Last updated:** July 2026  
 **How to use:** Move items across status sections; reference task ids in commits/PRs.  
 **Engineering sequence:** Prefer slices **S1–S18** in [17_IMPLEMENTATION_PLAN.md](17_IMPLEMENTATION_PLAN.md) for commit boundaries.  
@@ -120,7 +120,7 @@
 | T-M5-04 | Sample external plugin documentation | done (S15) |
 | T-M5-05 | Security pass: shell forbid, mount allowlists | done (S16) |
 | T-M5-06 | Orchestration overhead measurement | done (S16) |
-| T-M5-07 | Additional templates (Tailwind / workspace) as capacity allows | partial (S23: `nextjs-app-tailwind`; `pnpm-workspace` still parking lot) |
+| T-M5-07 | Additional templates (Tailwind / workspace) as capacity allows | done (S23 Tailwind + S24 `pnpm-workspace`) |
 
 ---
 
@@ -182,6 +182,8 @@ Record architecture choices here as they are made during implementation:
 | 2026-07-11 | S22: local `jsbench leaderboard` index; no upload; entries by runId not performance | Community share format without crowning winners |
 | 2026-07-11 | S23: `nextjs-app-tailwind` (Tailwind v4 PostCSS); defer `pnpm-workspace` | Expand install/build realism; one template per slice |
 | 2026-07-11 | Post-S23 gate: home h1 = `jsbench-<templateId>` in application renderer | Fixes Tailwind label mismatch without changing `nextjs-app` digest |
+| 2026-07-11 | S24: `pnpm-workspace` (`kind: workspace`); pin walk for packages/*; complete T-M5-07 | Multi-package install/build realism on Linux |
+| 2026-07-11 | Post-S24 gate: approve S24; reject `packageCount < 1` in workspace renderer | Quality gate after human approval |
 
 ---
 
@@ -190,8 +192,7 @@ Record architecture choices here as they are made during implementation:
 - Windows/macOS runners
 - Result *upload* (local leaderboard format done — S22)
 - Compose multi-service fixtures
-- Optional template: `pnpm-workspace` (remainder of T-M5-07)
-- Optional built-in profile for `nextjs-app-tailwind` matrices
+- Optional built-in profiles for `nextjs-app-tailwind` / `pnpm-workspace` matrices
 - `docker-stats` collector (metrics §5.4)
 
 ### Recorded risks / recommendations (post-1.0)
@@ -200,4 +201,5 @@ Record architecture choices here as they are made during implementation:
 |------|-------|
 | S22 leaderboard | Discovery depth capped; empty indexes valid; sharing is manual (no upload) |
 | S23 Tailwind | No profile yet; no `next build` in CI; refresh pins carefully and re-baseline digests |
-| Next suggested | `pnpm-workspace` **or** `docker-stats` / Compose / OS runners per roadmap priority |
+| S24 workspace | pnpm-oriented; no recursive install in default CI; `workspace:*` edges are sequential |
+| Next suggested | **`docker-stats` collector** (methodology), or optional profiles for new templates; Compose / OS runners lower priority |

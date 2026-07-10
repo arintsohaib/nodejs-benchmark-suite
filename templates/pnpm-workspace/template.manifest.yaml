@@ -1,0 +1,45 @@
+schemaVersion: 1
+id: pnpm-workspace
+title: pnpm multi-package workspace
+description: >
+  Multi-package TypeScript workspace (pnpm workspaces) with deterministic packages
+  under packages/pkg-NNN/. Intended for install / typecheck / recursive build matrices.
+  Prefer the pnpm adapter; default CI must not run full installs.
+engines:
+  node: "policy:lts-active"
+supports:
+  packageManagers: [pnpm]
+  sizes: [tiny, small, medium, large]
+produces:
+  kind: workspace
+  scripts:
+    build: pnpm -r run build
+    typecheck: pnpm -r run typecheck
+sizes:
+  tiny:
+    fileCount: 2
+    packageCount: 2
+    tsComplexity: 1
+    dependencySet: minimal
+  small:
+    fileCount: 4
+    packageCount: 3
+    tsComplexity: 2
+    dependencySet: minimal
+  medium:
+    fileCount: 8
+    packageCount: 4
+    tsComplexity: 3
+    dependencySet: standard
+  large:
+    fileCount: 16
+    packageCount: 6
+    tsComplexity: 4
+    dependencySet: standard
+parameters:
+  - name: fileCount
+    type: integer
+  - name: packageCount
+    type: integer
+  - name: tsComplexity
+    type: integer
